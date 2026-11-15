@@ -38,7 +38,7 @@ export default function PanelCaptura({
         {noReconocida
           ? "Huella no reconocida"
           : lectorNoDisponible
-            ? "Lector no disponible"
+            ? "No se detectó el lector de huella"
           : resultado
             ? resultado.registrada
               ? "¡Marcación registrada!"

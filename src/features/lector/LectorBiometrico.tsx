@@ -71,7 +71,7 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
         setLectorNoDisponible(noDisponible);
         if (error instanceof ApiError && error.status === 403) {
           mensaje =
-            "La conexión del lector aún no está configurada. Contacta al administrador.";
+            "Verifica la conexión y configuración del lector o contacta al administrador.";
         } else if (error instanceof ApiError && error.status === 429) {
           mensaje = "Demasiados intentos. Espere un momento.";
         }
