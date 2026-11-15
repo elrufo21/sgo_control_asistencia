@@ -14,6 +14,7 @@ export function Listado<Fila extends { id: number }>({
   cargando,
   filtros,
   acciones,
+  accionResumen,
 }: {
   titulo: string;
   resumen: string;
@@ -23,6 +24,7 @@ export function Listado<Fila extends { id: number }>({
   cargando: boolean;
   filtros?: ReactNode;
   acciones?: (fila: Fila) => ReactNode;
+  accionResumen?: ReactNode;
 }) {
   const [busqueda, setBusqueda] = useState("");
   const termino = busqueda.toLowerCase();
@@ -44,9 +46,13 @@ export function Listado<Fila extends { id: number }>({
           <span>{resumen}</span>
           <strong>{resultados.length}</strong>
         </div>
-        <div className="overview-note">
-          <span className="dot" /> Información del módulo
-        </div>
+        {accionResumen ? (
+          <div className="overview-action">{accionResumen}</div>
+        ) : (
+          <div className="overview-note">
+            <span className="dot" /> Información del módulo
+          </div>
+        )}
       </div>
       <section className="panel">
         <div className="panel-head">

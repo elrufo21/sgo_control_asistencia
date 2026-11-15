@@ -1,3 +1,7 @@
+.overview-action {
+  margin-left: auto;
+}
+
 @media (max-width: 600px) {
   .admin-table,
   .admin-table tbody,

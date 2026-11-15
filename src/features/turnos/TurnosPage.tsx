@@ -14,6 +14,7 @@ export function TurnosPage() {
     <RegistroCatalogo
       titulo="Turnos"
       singular="turno"
+      permitirNuevo
       descripcion="Define los horarios de trabajo del personal."
       icono={Clock3}
       listar={listarTurnos}

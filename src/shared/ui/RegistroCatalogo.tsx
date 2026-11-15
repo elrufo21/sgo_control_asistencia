@@ -1,9 +1,10 @@
 import { useState, type FormEvent, type ReactNode } from "react";
-import { Pencil, Trash2, X, type LucideIcon } from "lucide-react";
+import { Pencil, Plus, Trash2, X, type LucideIcon } from "lucide-react";
 import { mensajeError } from "../api/http";
 import { useConsulta } from "../hooks/useConsulta";
 import { Listado, type Columna } from "./Listado";
 import { AccionesFormulario, ErrorVista } from "./Pagina";
+import { Button } from "./Controls";
 
 export function RegistroCatalogo<Fila extends { id: number }>({
   titulo,
@@ -14,6 +15,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   guardar,
   eliminar,
   campos,
+  permitirNuevo,
 }: {
   titulo: string;
   singular: string;
@@ -24,6 +26,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   guardar: (id: number | undefined, datos: FormData) => Promise<void>;
   eliminar?: (id: number) => Promise<void>;
   campos: (fila: Fila | undefined) => ReactNode;
+  permitirNuevo?: boolean;
 }) {
   const { datos, cargando, error, recargar } = useConsulta(listar);
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
@@ -87,6 +90,11 @@ export function RegistroCatalogo<Fila extends { id: number }>({
         filas={datos ?? []}
         columnas={columnas}
         cargando={cargando}
+        accionResumen={permitirNuevo && (
+          <Button type="button" disabled={operacion} onClick={() => abrir()}>
+            <Plus size={18} /> Nuevo {singular}
+          </Button>
+        )}
         acciones={(fila) => (
           <>
             <button
