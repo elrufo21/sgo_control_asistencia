@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Camera, Fingerprint } from "lucide-react";
-import { Button, FileInput } from "../../shared/ui/Controls";
+import { Button, Field, FileInput } from "../../shared/ui/Controls";
+import TextInput from "../../shared/ui/TextInput";
 import FotoPersonal from "../../shared/ui/FotoPersonal";
 import { capturarHuella, type Empleado, type ImagenHuella } from "./api";
-import { mensajeError, urlApi } from "../../shared/api/http";
+import { ApiError, mensajeError, urlApi } from "../../shared/api/http";
+import { iniciarSesionLector, tieneSesionLector, usaLectorLocal } from "../../shared/api/lectorLocal";
 import { ImagenHuellaVista } from "./ImagenHuellaVista";
 
 export default function FotoEmpleado({
@@ -29,6 +31,10 @@ export default function FotoEmpleado({
     [huella, setHuella] = useState(Boolean(empleado.tieneHuella)),
     [mensaje, setMensaje] = useState("");
   const [imagenHuella, setImagenHuella] = useState<ImagenHuella | null>(null);
+  const [accesoLector, setAccesoLector] = useState(false);
+  const [usuarioLector, setUsuarioLector] = useState("");
+  const [claveLector, setClaveLector] = useState("");
+  const [autenticando, setAutenticando] = useState(false);
   const control = useRef<AbortController | null>(null);
   useEffect(() => () => control.current?.abort(), []);
   useEffect(() => {
@@ -68,6 +74,10 @@ export default function FotoEmpleado({
   }
   async function capturar() {
     if (!empleado.id || control.current) return;
+    if (usaLectorLocal && !tieneSesionLector()) {
+      setAccesoLector(true);
+      return;
+    }
     if (
       huella &&
       lecturas === 0 &&
@@ -108,10 +118,33 @@ export default function FotoEmpleado({
         );
       }
     } catch (error) {
-      if (!abort.signal.aborted) setMensaje(mensajeError(error));
+      if (!abort.signal.aborted) {
+        setMensaje(mensajeError(error));
+        if (usaLectorLocal && error instanceof ApiError && error.status === 401) setAccesoLector(true);
+      }
     } finally {
       if (!abort.signal.aborted) setCapturando(false);
       control.current = null;
+    }
+  }
+  async function conectarLector() {
+    if (control.current || !usuarioLector || !claveLector) return;
+    const abort = new AbortController();
+    control.current = abort;
+    setAutenticando(true);
+    setMensaje("");
+    try {
+      await iniciarSesionLector(usuarioLector, claveLector, abort.signal);
+      if (abort.signal.aborted) return;
+      setClaveLector("");
+      setAccesoLector(false);
+      control.current = null;
+      await capturar();
+    } catch (error) {
+      if (!abort.signal.aborted) setMensaje(mensajeError(error));
+    } finally {
+      if (!abort.signal.aborted) setAutenticando(false);
+      if (control.current === abort) control.current = null;
     }
   }
   return (
@@ -167,6 +200,12 @@ export default function FotoEmpleado({
           {empleado.estado === "INACTIVO" && (
             <span>La captura requiere un empleado activo.</span>
           )}
+          {accesoLector && <div className="lector-acceso">
+            <strong>Verifica tu cuenta de administrador para registrar la huella</strong>
+            <Field label="Usuario"><TextInput value={usuarioLector} onChange={(e) => setUsuarioLector(e.currentTarget.value)} autoComplete="username" /></Field>
+            <Field label="Contraseña"><TextInput type="password" value={claveLector} onChange={(e) => setClaveLector(e.currentTarget.value)} autoComplete="current-password" /></Field>
+            <Button type="button" onClick={conectarLector} disabled={autenticando || !usuarioLector || !claveLector}>{autenticando ? "Conectando..." : "Conectar lector"}</Button>
+          </div>}
         </div>
       </div>
       {empleado.id && (

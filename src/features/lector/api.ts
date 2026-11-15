@@ -1,4 +1,5 @@
 import { consultar } from "../../shared/api/http";
+import { marcarLocal, usaLectorLocal } from "../../shared/api/lectorLocal";
 
 export type Jornada = {
   id: number;
@@ -29,6 +30,7 @@ export type ResultadoLector = {
 };
 
 export function marcarConLector(signal: AbortSignal) {
+  if (usaLectorLocal) return marcarLocal<ResultadoLector>(signal);
   return consultar<ResultadoLector>("lector/marcar", {
     method: "POST",
     signal,

@@ -16,6 +16,7 @@ import { AppLayout } from "./AppLayout";
 import type { Pagina } from "./navegacion";
 import { ErrorVista } from "../shared/ui/Pagina";
 import { mensajeError } from "../shared/api/http";
+import { cerrarSesionLector } from "../shared/api/lectorLocal";
 
 export function App() {
   const [sesion, setSesion] = useState<Sesion | null>();
@@ -49,6 +50,7 @@ export function App() {
     if (salida.current && !salida.current()) return;
     try {
       await cerrarSesion();
+      cerrarSesionLector();
       setSesion(null);
       setPagina("lector");
       setError("");

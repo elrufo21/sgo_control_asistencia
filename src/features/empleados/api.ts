@@ -4,6 +4,7 @@ import {
   type Estado,
 } from "../../shared/api/catalogo";
 import { cambiar, consultar } from "../../shared/api/http";
+import { capturarLocal, usaLectorLocal } from "../../shared/api/lectorLocal";
 
 export type DatosEmpleado = {
   nombres: string;
@@ -46,7 +47,7 @@ export const consultarHorario = (id: number) =>
 export const guardarHorario = (id: number, dias: DiaHorario[]) =>
   cambiar(`empleados/${id}/horario`, "PUT", { dias });
 export const capturarHuella = (id: number, signal: AbortSignal) =>
-  consultar<CapturaHuella>(`empleados/${id}/huella/capturar`, {
+  usaLectorLocal ? capturarLocal<CapturaHuella>(id, signal) : consultar<CapturaHuella>(`empleados/${id}/huella/capturar`, {
     method: "POST",
     signal,
   });

@@ -3,6 +3,7 @@ import { Activity, ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
 import { Button } from "../../shared/ui/Controls";
 import { marcarConLector, type ResultadoLector } from "./api";
 import { ApiError, mensajeError } from "../../shared/api/http";
+import { usaLectorLocal } from "../../shared/api/lectorLocal";
 import TablaJornadas from "./TablaJornadas";
 import FotoPersonal from "../../shared/ui/FotoPersonal";
 import PanelCaptura from "./PanelCaptura";
@@ -67,7 +68,8 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
       } catch (error) {
         if (!activo || control?.signal.aborted) return;
         let mensaje = mensajeError(error);
-        const noDisponible = error instanceof ApiError && error.status === 403;
+        const noDisponible = (error instanceof ApiError && (error.status === 403 || (usaLectorLocal && error.status === 503))) ||
+          (usaLectorLocal && mensaje.startsWith("No se detectó el lector de huella."));
         setLectorNoDisponible(noDisponible);
         if (error instanceof ApiError && error.status === 403) {
           mensaje =
