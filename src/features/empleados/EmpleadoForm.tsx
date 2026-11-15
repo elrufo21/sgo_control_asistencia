@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import type { Area } from "../areas/api";
 import type { Turno } from "../turnos/api";
@@ -15,6 +15,7 @@ import TextInput from "../../shared/ui/TextInput";
 import FotoEmpleado from "./FotoEmpleado";
 import { eliminarEmpleado, guardarEmpleado, type Empleado } from "./api";
 import { useConfirmacion } from "../../shared/ui/Confirmacion";
+import { ToastError } from "../../shared/ui/ToastError";
 
 function leerFoto(archivo: File) {
   return new Promise<string>((resolve, reject) => {
@@ -48,6 +49,8 @@ export function EmpleadoForm({
   const [editado, setEditado] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
+  const [errorEliminacion, setErrorEliminacion] = useState("");
+  const cerrarToast = useCallback(() => setErrorEliminacion(""), []);
   const confirmar = useConfirmacion();
 
   useEffect(() => {
@@ -103,12 +106,13 @@ export function EmpleadoForm({
     ) return;
     setGuardando(true);
     setError("");
+    setErrorEliminacion("");
     try {
       await eliminarEmpleado(empleado.id);
       alGuardar();
       alCerrar();
     } catch (error) {
-      setError(mensajeError(error));
+      setErrorEliminacion(mensajeError(error));
     } finally {
       setGuardando(false);
     }
@@ -119,6 +123,7 @@ export function EmpleadoForm({
       className="panel empleado-formulario"
       aria-labelledby="empleado-form-title"
     >
+      <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
       <div className="empleado-form-head">
         <Button
           type="button"

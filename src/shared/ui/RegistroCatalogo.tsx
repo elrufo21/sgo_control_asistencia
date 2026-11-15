@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useState, type FormEvent, type ReactNode } from "react";
 import { Pencil, Plus, Trash2, X, type LucideIcon } from "lucide-react";
 import { mensajeError } from "../api/http";
 import { useConsulta } from "../hooks/useConsulta";
@@ -6,6 +6,7 @@ import { Listado, type Columna } from "./Listado";
 import { AccionesFormulario, ErrorVista } from "./Pagina";
 import { Button } from "./Controls";
 import { useConfirmacion } from "./Confirmacion";
+import { ToastError } from "./ToastError";
 
 export function RegistroCatalogo<Fila extends { id: number }>({
   titulo,
@@ -31,6 +32,8 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
   const [operacion, setOperacion] = useState(false);
   const [errorOperacion, setErrorOperacion] = useState("");
+  const [errorEliminacion, setErrorEliminacion] = useState("");
+  const cerrarToast = useCallback(() => setErrorEliminacion(""), []);
   const confirmar = useConfirmacion();
 
   function abrir(fila?: Fila) {
@@ -64,12 +67,13 @@ export function RegistroCatalogo<Fila extends { id: number }>({
       return;
     setOperacion(true);
     setErrorOperacion("");
+    setErrorEliminacion("");
     try {
       await eliminar(id);
       setEdicion(undefined);
       recargar();
     } catch (error) {
-      setErrorOperacion(mensajeError(error));
+      setErrorEliminacion(mensajeError(error));
     } finally {
       setOperacion(false);
     }
@@ -83,6 +87,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
 
   return (
     <>
+      <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
       <ErrorVista mensaje={error || (!edicion ? errorOperacion : "")} />
       <Listado
         titulo={`Listado de ${titulo.toLowerCase()}`}

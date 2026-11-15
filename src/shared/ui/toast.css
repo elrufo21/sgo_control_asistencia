@@ -1,0 +1,38 @@
+.toast-error {
+  position: fixed;
+  z-index: 100;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(420px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid #f4d2ce;
+  border-radius: 10px;
+  background: #fff7f6;
+  color: #a43f35;
+  box-shadow: 0 8px 28px #173c4930;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.toast-error > svg {
+  flex: none;
+}
+.toast-error span {
+  flex: 1;
+}
+.toast-error button {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+@media (max-width: 500px) {
+  .toast-error {
+    top: 16px;
+    right: 16px;
+  }
+}
