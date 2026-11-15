@@ -1,0 +1,27 @@
+.confirmacion {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  width: min(440px, calc(100% - 32px));
+}
+.confirmacion::backdrop {
+  background: #14343e80;
+}
+.confirmacion-contenido {
+  padding: 26px 25px;
+}
+.confirmacion-contenido p {
+  color: #607b83;
+  font-size: 14px;
+  line-height: 1.55;
+  margin-top: 10px;
+}
+.button.confirmacion-peligro {
+  background: #c94343;
+  border-color: #c94343;
+}
+.button.confirmacion-peligro:hover {
+  background: #a83232;
+}

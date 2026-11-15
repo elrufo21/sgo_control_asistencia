@@ -23,8 +23,8 @@ export function App() {
   const [pagina, setPagina] = useState<Pagina>("lector");
   const [lectorPublico, setLectorPublico] = useState(false);
   const [error, setError] = useState("");
-  const salida = useRef<(() => boolean) | null>(null);
-  const protegerSalida = useCallback((verificar: (() => boolean) | null) => {
+  const salida = useRef<(() => Promise<boolean>) | null>(null);
+  const protegerSalida = useCallback((verificar: (() => Promise<boolean>) | null) => {
     salida.current = verificar;
   }, []);
 
@@ -40,14 +40,14 @@ export function App() {
     return () => control.abort();
   }, []);
 
-  function navegar(destino: Pagina) {
-    if (salida.current && !salida.current()) return;
+  async function navegar(destino: Pagina) {
+    if (salida.current && !(await salida.current())) return;
     setError("");
     setPagina(destino);
   }
 
   async function salir() {
-    if (salida.current && !salida.current()) return;
+    if (salida.current && !(await salida.current())) return;
     try {
       await cerrarSesion();
       cerrarSesionLector();

@@ -7,7 +7,7 @@ import {
 } from "../../shared/ui/camposRegistro";
 import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import TextInput from "../../shared/ui/TextInput";
-import { guardarTurno, listarTurnos } from "./api";
+import { eliminarTurno, guardarTurno, listarTurnos } from "./api";
 
 export function TurnosPage() {
   return (
@@ -17,6 +17,7 @@ export function TurnosPage() {
       descripcion="Define los horarios de trabajo del personal."
       icono={Clock3}
       listar={listarTurnos}
+      eliminar={eliminarTurno}
       columnas={[
         ["nombre", "Nombre"],
         ["entrada", "Entrada"],

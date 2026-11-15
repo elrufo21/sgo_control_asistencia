@@ -11,7 +11,7 @@ import {
 import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import TextInput from "../../shared/ui/TextInput";
-import { guardarUsuario, listarUsuarios } from "./api";
+import { eliminarUsuario, guardarUsuario, listarUsuarios } from "./api";
 
 export function UsuariosPage() {
   const empleados = useConsulta(listarEmpleados);
@@ -32,6 +32,7 @@ export function UsuariosPage() {
         descripcion="Administra los accesos al sistema."
         icono={UserRound}
         listar={listarUsuarios}
+        eliminar={eliminarUsuario}
         columnas={[
           ["usuario", "Usuario"],
           ["nombre", "Empleado"],

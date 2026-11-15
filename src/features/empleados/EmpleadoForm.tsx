@@ -13,7 +13,8 @@ import {
 } from "../../shared/ui/camposRegistro";
 import TextInput from "../../shared/ui/TextInput";
 import FotoEmpleado from "./FotoEmpleado";
-import { guardarEmpleado, type Empleado } from "./api";
+import { eliminarEmpleado, guardarEmpleado, type Empleado } from "./api";
+import { useConfirmacion } from "../../shared/ui/Confirmacion";
 
 function leerFoto(archivo: File) {
   return new Promise<string>((resolve, reject) => {
@@ -40,27 +41,28 @@ export function EmpleadoForm({
   turnos: Turno[];
   alCerrar: () => void;
   alGuardar: () => void;
-  protegerSalida: (verificar: (() => boolean) | null) => void;
+  protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
 }) {
   const [foto, setFoto] = useState<File | null>(null);
   const [eliminarFoto, setEliminarFoto] = useState(false);
   const [editado, setEditado] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
+  const confirmar = useConfirmacion();
 
   useEffect(() => {
     protegerSalida(
-      () =>
+      async () =>
         !guardando &&
-        (!editado || window.confirm("Hay cambios sin guardar. ¿Deseas salir?")),
+        (!editado || await confirmar({ titulo: "Cambios sin guardar", mensaje: "Si sales ahora, perderás los cambios realizados.", confirmar: "Salir" })),
     );
     return () => protegerSalida(null);
-  }, [editado, guardando, protegerSalida]);
+  }, [editado, guardando, protegerSalida, confirmar]);
 
-  function cancelar() {
+  async function cancelar() {
     if (
       !guardando &&
-      (!editado || window.confirm("Hay cambios sin guardar. ¿Deseas salir?"))
+      (!editado || await confirmar({ titulo: "Cambios sin guardar", mensaje: "Si sales ahora, perderás los cambios realizados.", confirmar: "Salir" }))
     )
       alCerrar();
   }
@@ -84,6 +86,25 @@ export function EmpleadoForm({
         eliminarFoto,
         fotoBase64: foto ? await leerFoto(foto) : undefined,
       });
+      alGuardar();
+      alCerrar();
+    } catch (error) {
+      setError(mensajeError(error));
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  async function eliminar() {
+    if (
+      !empleado ||
+      guardando ||
+      !(await confirmar({ titulo: "Eliminar empleado", mensaje: "¿Deseas eliminar este empleado? Se perderán los cambios sin guardar.", confirmar: "Eliminar", peligro: true }))
+    ) return;
+    setGuardando(true);
+    setError("");
+    try {
+      await eliminarEmpleado(empleado.id);
       alGuardar();
       alCerrar();
     } catch (error) {
@@ -180,7 +201,11 @@ export function EmpleadoForm({
           </div>
         </div>
         <ErrorVista mensaje={error} className="dialog-error" />
-        <AccionesFormulario guardando={guardando} cancelar={cancelar} />
+        <AccionesFormulario
+          guardando={guardando}
+          cancelar={cancelar}
+          eliminar={empleado ? eliminar : undefined}
+        />
       </form>
     </section>
   );

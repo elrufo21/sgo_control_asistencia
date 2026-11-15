@@ -4,6 +4,7 @@ import {
   type Estado,
 } from "../../shared/api/catalogo";
 import type { Rol } from "../auth/api";
+import { cambiar } from "../../shared/api/http";
 
 export type Usuario = {
   id: number;
@@ -21,5 +22,7 @@ type DatosUsuario = {
   estado: Estado;
 };
 export const listarUsuarios = opcionesCatalogo<Usuario>("usuarios");
+export const eliminarUsuario = (id: number) =>
+  cambiar(`usuarios/${id}`, "DELETE");
 export const guardarUsuario = (id: number | undefined, datos: DatosUsuario) =>
   guardarRegistro("usuarios", id, datos);

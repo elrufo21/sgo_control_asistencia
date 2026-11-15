@@ -36,6 +36,8 @@ type Horario = {
 };
 
 export const listarEmpleados = opcionesCatalogo<Empleado>("empleados");
+export const eliminarEmpleado = (id: number) =>
+  cambiar(`empleados/${id}`, "DELETE");
 export function guardarEmpleado(
   id: number | undefined,
   datos: DatosEmpleado & { fotoBase64?: string; eliminarFoto: boolean },

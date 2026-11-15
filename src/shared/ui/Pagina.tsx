@@ -46,12 +46,24 @@ export function ErrorVista({
 export function AccionesFormulario({
   guardando,
   cancelar,
+  eliminar,
 }: {
   guardando: boolean;
   cancelar: () => void;
+  eliminar?: () => void;
 }) {
   return (
     <div className="dialog-actions">
+      {eliminar && (
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={eliminar}
+          disabled={guardando}
+        >
+          Eliminar
+        </Button>
+      )}
       <Button
         type="button"
         variant="secondary"

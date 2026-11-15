@@ -3,6 +3,7 @@ import {
   opcionesCatalogo,
   type Estado,
 } from "../../shared/api/catalogo";
+import { cambiar } from "../../shared/api/http";
 
 export type DatosTurno = {
   nombre: string;
@@ -13,5 +14,6 @@ export type DatosTurno = {
 };
 export type Turno = DatosTurno & { id: number };
 export const listarTurnos = opcionesCatalogo<Turno>("turnos");
+export const eliminarTurno = (id: number) => cambiar(`turnos/${id}`, "DELETE");
 export const guardarTurno = (id: number | undefined, datos: DatosTurno) =>
   guardarRegistro("turnos", id, datos);

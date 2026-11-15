@@ -22,7 +22,7 @@ const columnas: Columna<Empleado>[] = [
 export function EmpleadosPage({
   protegerSalida,
 }: {
-  protegerSalida: (verificar: (() => boolean) | null) => void;
+  protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
 }) {
   const empleados = useConsulta(listarEmpleados);
   const areas = useConsulta(listarAreas);

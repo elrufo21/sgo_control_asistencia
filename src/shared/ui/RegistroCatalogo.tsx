@@ -5,6 +5,7 @@ import { useConsulta } from "../hooks/useConsulta";
 import { Listado, type Columna } from "./Listado";
 import { AccionesFormulario, ErrorVista } from "./Pagina";
 import { Button } from "./Controls";
+import { useConfirmacion } from "./Confirmacion";
 
 export function RegistroCatalogo<Fila extends { id: number }>({
   titulo,
@@ -30,6 +31,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
   const [operacion, setOperacion] = useState(false);
   const [errorOperacion, setErrorOperacion] = useState("");
+  const confirmar = useConfirmacion();
 
   function abrir(fila?: Fila) {
     if (operacion) return;
@@ -57,13 +59,14 @@ export function RegistroCatalogo<Fila extends { id: number }>({
     if (
       !eliminar ||
       operacion ||
-      !window.confirm("¿Deseas eliminar este registro?")
+      !(await confirmar({ titulo: `Eliminar ${singular}`, mensaje: "¿Deseas eliminar este registro? Esta acción no se puede deshacer.", confirmar: "Eliminar", peligro: true }))
     )
       return;
     setOperacion(true);
     setErrorOperacion("");
     try {
       await eliminar(id);
+      setEdicion(undefined);
       recargar();
     } catch (error) {
       setErrorOperacion(mensajeError(error));
@@ -151,7 +154,15 @@ export function RegistroCatalogo<Fila extends { id: number }>({
             <form onSubmit={enviar}>
               <div className="form-grid">{campos(edicion.fila)}</div>
               <ErrorVista mensaje={errorOperacion} className="dialog-error" />
-              <AccionesFormulario guardando={operacion} cancelar={cerrar} />
+              <AccionesFormulario
+                guardando={operacion}
+                cancelar={cerrar}
+                eliminar={
+                  eliminar && edicion.fila
+                    ? () => quitar(edicion.fila!.id)
+                    : undefined
+                }
+              />
             </form>
           </div>
         </div>

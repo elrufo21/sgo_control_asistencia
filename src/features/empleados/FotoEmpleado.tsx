@@ -7,6 +7,7 @@ import { capturarHuella, type Empleado, type ImagenHuella } from "./api";
 import { ApiError, mensajeError, urlApi } from "../../shared/api/http";
 import { iniciarSesionLector, tieneSesionLector, usaLectorLocal } from "../../shared/api/lectorLocal";
 import { ImagenHuellaVista } from "./ImagenHuellaVista";
+import { useConfirmacion } from "../../shared/ui/Confirmacion";
 
 export default function FotoEmpleado({
   empleado,
@@ -36,6 +37,7 @@ export default function FotoEmpleado({
   const [claveLector, setClaveLector] = useState("");
   const [autenticando, setAutenticando] = useState(false);
   const control = useRef<AbortController | null>(null);
+  const confirmar = useConfirmacion();
   useEffect(() => () => control.current?.abort(), []);
   useEffect(() => {
     if (!foto) {
@@ -81,9 +83,7 @@ export default function FotoEmpleado({
     if (
       huella &&
       lecturas === 0 &&
-      !window.confirm(
-        "¿Deseas reemplazar la huella registrada de este empleado?",
-      )
+      !(await confirmar({ titulo: "Reemplazar huella", mensaje: "¿Deseas reemplazar la huella registrada de este empleado?", confirmar: "Reemplazar" }))
     )
       return;
     const abort = new AbortController();
