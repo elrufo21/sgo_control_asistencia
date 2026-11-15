@@ -7,11 +7,13 @@ export default function PanelCaptura({
   mensaje,
   resultado,
   horaMarcacion,
+  lectorNoDisponible,
 }: {
   estado: string;
   mensaje: string;
   resultado: ResultadoLector | null;
   horaMarcacion: string;
+  lectorNoDisponible: boolean;
 }) {
   const noReconocida = mensaje.startsWith("Huella no reconocida.");
   return (
@@ -35,6 +37,8 @@ export default function PanelCaptura({
       <h2 id="captura-titulo">
         {noReconocida
           ? "Huella no reconocida"
+          : lectorNoDisponible
+            ? "Lector no disponible"
           : resultado
             ? resultado.registrada
               ? "¡Marcación registrada!"
@@ -44,6 +48,8 @@ export default function PanelCaptura({
       <p>
         {noReconocida
           ? "Retira el dedo y vuelve a intentarlo."
+          : lectorNoDisponible
+            ? "La marcación por huella estará disponible cuando se conecte el lector."
           : resultado
             ? "Retira tu dedo del lector para finalizar."
             : "Apoya el dedo registrado y espera la confirmación en pantalla."}

@@ -27,6 +27,7 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
   const [ahora, setAhora] = useState(() => new Date());
   const [resultado, setResultado] = useState<ResultadoLector | null>(null),
     [mensaje, setMensaje] = useState(""),
+    [lectorNoDisponible, setLectorNoDisponible] = useState(false),
     [leyendo, setLeyendo] = useState(false),
     [visible, setVisible] = useState(
       () => typeof document === "undefined" || !document.hidden,
@@ -62,12 +63,15 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
         if (!activo) return;
         setResultado(data);
         setMensaje("");
+        setLectorNoDisponible(false);
       } catch (error) {
         if (!activo || control?.signal.aborted) return;
         let mensaje = mensajeError(error);
+        const noDisponible = error instanceof ApiError && error.status === 403;
+        setLectorNoDisponible(noDisponible);
         if (error instanceof ApiError && error.status === 403) {
           mensaje =
-            "El lector solo está habilitado en la computadora del backend.";
+            "La conexión del lector aún no está configurada. Contacta al administrador.";
         } else if (error instanceof ApiError && error.status === 429) {
           mensaje = "Demasiados intentos. Espere un momento.";
         }
@@ -147,6 +151,7 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
             mensaje={mensaje}
             resultado={resultado}
             horaMarcacion={horaMarcacion}
+            lectorNoDisponible={lectorNoDisponible}
           />
           <section
             className="panel lector-identidad"
