@@ -15,7 +15,6 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   guardar,
   eliminar,
   campos,
-  permitirNuevo,
 }: {
   titulo: string;
   singular: string;
@@ -26,7 +25,6 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   guardar: (id: number | undefined, datos: FormData) => Promise<void>;
   eliminar?: (id: number) => Promise<void>;
   campos: (fila: Fila | undefined) => ReactNode;
-  permitirNuevo?: boolean;
 }) {
   const { datos, cargando, error, recargar } = useConsulta(listar);
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
@@ -90,11 +88,11 @@ export function RegistroCatalogo<Fila extends { id: number }>({
         filas={datos ?? []}
         columnas={columnas}
         cargando={cargando}
-        accionResumen={permitirNuevo && (
+        accionResumen={
           <Button type="button" disabled={operacion} onClick={() => abrir()}>
             <Plus size={18} /> Nuevo {singular}
           </Button>
-        )}
+        }
         acciones={(fila) => (
           <>
             <button

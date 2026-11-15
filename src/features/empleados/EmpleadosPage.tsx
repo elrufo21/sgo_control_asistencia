@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { CalendarDays, Pencil, Users } from "lucide-react";
+import { CalendarDays, Pencil, Plus, Users } from "lucide-react";
 import { useConsulta } from "../../shared/hooks/useConsulta";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import { Listado, type Columna } from "../../shared/ui/Listado";
+import { Button } from "../../shared/ui/Controls";
 import { listarAreas } from "../areas/api";
 import { listarTurnos } from "../turnos/api";
 import { listarEmpleados, type Empleado } from "./api";
@@ -42,6 +43,15 @@ export function EmpleadosPage({
           columnas={columnas}
           filas={empleados.datos ?? []}
           cargando={empleados.cargando}
+          accionResumen={
+            <Button
+              type="button"
+              disabled={!opcionesDisponibles || opcionesCargando}
+              onClick={() => setFicha({})}
+            >
+              <Plus size={18} /> Nuevo empleado
+            </Button>
+          }
           acciones={(empleado) => (
             <>
               <button
