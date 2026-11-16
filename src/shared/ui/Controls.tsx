@@ -1,4 +1,5 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import { Plus } from "lucide-react";
 
 type ButtonProps = ComponentPropsWithoutRef<"button"> & {
   variant?: "secondary";
@@ -11,6 +12,10 @@ export function Button({ variant, className, ...props }: ButtonProps) {
       className={["button", variant, className].filter(Boolean).join(" ")}
     />
   );
+}
+
+export function BotonNuevo({ nombre, ...props }: Omit<ButtonProps, "children"> & { nombre: string }) {
+  return <Button {...props} className="button-new" aria-label={`Nuevo ${nombre}`} title={`Nuevo ${nombre}`}><Plus size={18} aria-hidden="true" /></Button>;
 }
 
 export function Field({

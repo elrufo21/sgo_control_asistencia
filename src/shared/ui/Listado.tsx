@@ -28,5 +28,5 @@ export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, fil
     if (acciones) cols.push({ id: "acciones", header: "Acciones", cell: ({ row }) => acciones(row.original) });
     return cols;
   }, [columnas, acciones]);
-  return <DataTable title={titulo} storageKey={titulo} columns={defs} data={filas} filterKeys={filterKeys} loading={cargando} filters={filtros} resetPageOn={resetPageOn} action={accionCabecera} emptyContent={<div className="empty"><div className="empty-icon"><Icono size={27} /></div><strong>No hay registros para mostrar</strong><span>Prueba con otra búsqueda o modifica los filtros.</span></div>} />;
+  return <DataTable title={titulo} storageKey={titulo} columns={defs} data={filas} filterKeys={filterKeys} loading={cargando} filters={filtros} resetPageOn={resetPageOn} searchAction={accionCabecera} emptyContent={<div className="empty"><div className="empty-icon"><Icono size={27} /></div><strong>No hay registros para mostrar</strong><span>Prueba con otra búsqueda o modifica los filtros.</span></div>} />;
 }

@@ -1,10 +1,10 @@
 import { useCallback, useState, type FormEvent, type ReactNode } from "react";
-import { Pencil, Plus, Trash2, X, type LucideIcon } from "lucide-react";
+import { Pencil, Trash2, X, type LucideIcon } from "lucide-react";
 import { mensajeError } from "../api/http";
 import { useConsulta } from "../hooks/useConsulta";
 import { Listado, type Columna } from "./Listado";
 import { AccionesFormulario, ErrorVista } from "./Pagina";
-import { Button } from "./Controls";
+import { BotonNuevo } from "./Controls";
 import { useConfirmacion } from "./Confirmacion";
 import { ToastError } from "./ToastError";
 
@@ -104,9 +104,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
         columnas={columnas}
         cargando={cargando}
         accionCabecera={
-          <Button type="button" disabled={operacion} onClick={() => abrir()}>
-            <Plus size={18} /> Nuevo {singular}
-          </Button>
+          <BotonNuevo type="button" nombre={singular} disabled={operacion} onClick={() => abrir()} />
         }
         acciones={(fila) => (
           <>

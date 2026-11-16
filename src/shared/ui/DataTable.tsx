@@ -14,7 +14,7 @@ function saveValue(storage: Storage, key: string, value: string) {
   try { if (value) storage.setItem(key, value); else storage.removeItem(key); } catch { /* Almacenamiento no disponible. */ }
 }
 
-export default function DataTable<T extends object>({ columns, data, filterKeys, storageKey, title, filters, action, loading = false, emptyMessage = "No hay datos para mostrar.", emptyContent, showSearch = true, showPagination = true, persistSearch = true, resetPageOn }: {
+export default function DataTable<T extends object>({ columns, data, filterKeys, storageKey, title, filters, action, searchAction, loading = false, emptyMessage = "No hay datos para mostrar.", emptyContent, showSearch = true, showPagination = true, persistSearch = true, resetPageOn }: {
   columns: ColumnDef<T, unknown>[];
   data: T[];
   filterKeys: readonly (keyof T & string)[];
@@ -22,6 +22,7 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   title?: string;
   filters?: ReactNode;
   action?: ReactNode;
+  searchAction?: ReactNode;
   loading?: boolean;
   emptyMessage?: string;
   emptyContent?: ReactNode;
@@ -50,10 +51,11 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   const end = Math.min(start + visibleRows.length - (start ? 1 : 0), filtered.length);
 
   return <section className="panel data-table">
-    {(title || showSearch || action || filters) && <div className="data-table-toolbar">
+    {(title || showSearch || action || searchAction || filters) && <div className="data-table-toolbar">
       <div className="data-table-toolbar-row">
         <div className="data-table-primary">
           {showSearch && <div className="search data-table-search"><Search size={18} aria-hidden="true" /><TextInput aria-label="Buscar registros" placeholder="Buscar en la tabla..." value={search} onChange={(e) => setSearch(e.currentTarget.value)} />{search && <button type="button" className="icon-button" aria-label="Limpiar búsqueda" onClick={() => setSearch("")}><X size={16} /></button>}</div>}
+          {searchAction && <div className="data-table-search-action">{searchAction}</div>}
           {action && <div className="data-table-action">{action}</div>}
         </div>
         {filters && <div className="data-table-filters">{filters}</div>}
