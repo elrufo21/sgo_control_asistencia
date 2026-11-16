@@ -29,6 +29,10 @@ export function marcarLocal<T>(signal: AbortSignal, modo: string) {
   return enviar<T>("/marcar", signal, { modo });
 }
 
+export function registrarAtencionLocal<T>(signal: AbortSignal, datos: object) {
+  return enviar<T>("/atencion", signal, datos);
+}
+
 export function confirmarLocal<T>(signal: AbortSignal, tokenConfirmacion: string) {
   return enviar<T>("/confirmar", signal, { token: tokenConfirmacion });
 }

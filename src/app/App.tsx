@@ -13,6 +13,7 @@ import { FeriadosPage } from "../features/feriados/FeriadosPage";
 import LectorBiometrico from "../features/lector/LectorBiometrico";
 import { TurnosPage } from "../features/turnos/TurnosPage";
 import { UsuariosPage } from "../features/usuarios/UsuariosPage";
+import { AtencionesPage } from "../features/atenciones/AtencionesPage";
 import { AppLayout } from "./AppLayout";
 import type { Pagina } from "./navegacion";
 import { ErrorVista } from "../shared/ui/Pagina";
@@ -72,6 +73,7 @@ export function App() {
 
   const vistas = {
     lector: <LectorBiometrico esAdmin={sesion.rol === "ADMIN"} />,
+    atenciones: <AtencionesPage esAdmin={sesion.rol === "ADMIN"} />,
     empleados: <EmpleadosPage protegerSalida={protegerSalida} />,
     usuarios: <UsuariosPage />,
     areas: <AreasPage />,
@@ -80,7 +82,7 @@ export function App() {
     reporte: <ReportePage />,
     permisos: <PermisosPage />,
   };
-  const paginaActual = sesion.rol === "ADMIN" ? pagina : "lector";
+  const paginaActual = sesion.rol === "ADMIN" || pagina === "atenciones" ? pagina : "lector";
 
   return (
     <AppLayout

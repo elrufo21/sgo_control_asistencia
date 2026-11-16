@@ -11,6 +11,7 @@ import type { Rol } from "../features/auth/api";
 
 export const navegacion = [
   { id: "lector", titulo: "Lector biométrico", icono: Fingerprint },
+  { id: "atenciones", titulo: "Atenciones", icono: ClipboardList },
   { id: "empleados", titulo: "Empleados", icono: Users },
   { id: "usuarios", titulo: "Usuarios", icono: UserRound },
   { id: "areas", titulo: "Áreas", icono: Building2 },
@@ -22,4 +23,4 @@ export const navegacion = [
 
 export type Pagina = (typeof navegacion)[number]["id"];
 export const paginasDe = (rol: Rol) =>
-  navegacion.filter(({ id }) => rol === "ADMIN" || id === "lector");
+  navegacion.filter(({ id }) => rol === "ADMIN" || id === "lector" || id === "atenciones");
