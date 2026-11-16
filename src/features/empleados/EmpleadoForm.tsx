@@ -16,6 +16,7 @@ import FotoEmpleado from "./FotoEmpleado";
 import { eliminarEmpleado, guardarEmpleado, type Empleado } from "./api";
 import { useConfirmacion } from "../../shared/ui/Confirmacion";
 import { ToastError } from "../../shared/ui/ToastError";
+import { formatoFecha } from "../../shared/formatoFecha";
 
 function leerFoto(archivo: File) {
   return new Promise<string>((resolve, reject) => {
@@ -147,7 +148,7 @@ export function EmpleadoForm({
     if (hoy.getMonth() + 1 < month || (hoy.getMonth() + 1 === month && hoy.getDate() < day)) valor--;
     return valor >= 0 ? `${valor} años` : "";
   })();
-  const ingreso = /^\d{4}-\d{2}-\d{2}/.test(empleado?.ingreso ?? "") ? empleado!.ingreso!.slice(0, 10) : "";
+  const ingreso = empleado ? formatoFecha(empleado.ingreso ?? null) : formatoFecha(new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()));
 
   return (
     <section className="panel empleado-formulario" aria-labelledby="empleado-form-title">
@@ -165,7 +166,7 @@ export function EmpleadoForm({
         </div>
         <div className="empleado-form-layout">
           <div className="form-grid empleado-datos">
-            <Field label="Área"><Select name="areaId" defaultValue={empleado?.areaId ?? ""}><option value="">Sin asignar</option>{areas.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
+            <Field label="Área"><Select name="areaId" required defaultValue={empleado?.areaId ?? ""}><option value="">Seleccione área</option>{areas.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
             <div className="field"><span>Consultar DNI</span><div className="empleado-consulta-dni"><TextInput aria-label="DNI a consultar" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div></div>
             <Field label="Nombres"><TextInput name="nombres" value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="Apellidos"><TextInput name="apellidos" value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
@@ -175,7 +176,7 @@ export function EmpleadoForm({
             <Field label="Edad"><TextInput value={edad} readOnly disabled /></Field>
             <Field label="Dirección"><TextInput name="direccion" defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
             <Field label="Correo"><TextInput name="email" type="email" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
-            <Field label="Fecha de ingreso"><TextInput type="date" value={ingreso} readOnly disabled /></Field>
+            <Field label={empleado ? "Fecha y hora de ingreso" : "Fecha de ingreso"}><TextInput value={ingreso} readOnly /></Field>
             <CampoEstado estado={empleado?.estado} />
             <Field label="Turno sugerido para horario"><Select name="turnoId" defaultValue={empleado?.turnoId ?? ""}><option value="">Sin asignar</option>{turnos.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
           </div>
