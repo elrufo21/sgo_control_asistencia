@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Activity, ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
 import { Button } from "../../shared/ui/Controls";
-import { marcarConLector, type ResultadoLector } from "./api";
+import { confirmarMarcacion, consultarJornadasHoy, consultarPermisosHoy, marcarConLector, type Jornada, type PermisoLector, type ResultadoLector } from "./api";
 import { ApiError, mensajeError } from "../../shared/api/http";
 import { usaLectorLocal } from "../../shared/api/lectorLocal";
 import TablaJornadas from "./TablaJornadas";
@@ -24,8 +24,18 @@ const hora = new Intl.DateTimeFormat("es-PE", {
   hour12: false,
 });
 
-export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
+export default function LectorBiometrico({ onBack, esAdmin = false }: { onBack?: () => void; esAdmin?: boolean }) {
+  const [pendiente, setPendiente] = useState<string | null>(null);
+  const [confirmando, setConfirmando] = useState(false);
+  const [jornadas, setJornadas] = useState<Jornada[]>([]);
+  const [permisos, setPermisos] = useState<PermisoLector[]>([]);
+  const [errorPermisos, setErrorPermisos] = useState("");
+  const [cargandoPermisos, setCargandoPermisos] = useState(false);
+  const [errorJornadas, setErrorJornadas] = useState("");
+  const [cargandoJornadas, setCargandoJornadas] = useState(false);
+  const [revisionJornadas, setRevisionJornadas] = useState(0);
   const [ahora, setAhora] = useState(() => new Date());
+  const [modo, setModo] = useState("");
   const [resultado, setResultado] = useState<ResultadoLector | null>(null),
     [mensaje, setMensaje] = useState(""),
     [lectorNoDisponible, setLectorNoDisponible] = useState(false),
@@ -43,12 +53,37 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
     return () => document.removeEventListener("visibilitychange", cambiar);
   }, []);
   useEffect(() => {
+    if (!esAdmin || !visible) return;
+    const timer = setInterval(() => setRevisionJornadas((revision) => revision + 1), 30000);
+    return () => clearInterval(timer);
+  }, [esAdmin, visible]);
+  useEffect(() => {
+    if (!esAdmin || !visible) return;
+    const control = new AbortController();
+    setCargandoJornadas(true);
+    consultarJornadasHoy(control.signal)
+      .then((filas) => { if (!control.signal.aborted) { setJornadas(filas); setErrorJornadas(""); } })
+      .catch((error: unknown) => { if (!control.signal.aborted) setErrorJornadas(mensajeError(error)); })
+      .finally(() => { if (!control.signal.aborted) setCargandoJornadas(false); });
+    setCargandoPermisos(true);
+    consultarPermisosHoy(control.signal)
+      .then((filas) => { if (!control.signal.aborted) { setPermisos(filas); setErrorPermisos(""); } })
+      .catch((error: unknown) => { if (!control.signal.aborted) setErrorPermisos(mensajeError(error)); })
+      .finally(() => { if (!control.signal.aborted) setCargandoPermisos(false); });
+    return () => control.abort();
+  }, [esAdmin, visible, revisionJornadas]);
+  useEffect(() => {
+    if (!modo || modo === "PAUSA") return;
+    const timer = setTimeout(() => setModo("PAUSA"), 30000);
+    return () => clearTimeout(timer);
+  }, [modo]);
+  useEffect(() => {
     if (!resultado) return;
     const timer = setTimeout(() => setResultado(null), 30000);
     return () => clearTimeout(timer);
   }, [resultado]);
   useEffect(() => {
-    if (!visible) {
+    if (!visible || modo === "PAUSA" || pendiente) {
       setLeyendo(false);
       return;
     }
@@ -60,9 +95,12 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
       setLeyendo(true);
       let espera = 800;
       try {
-        const data = await marcarConLector(control.signal);
+        const data = await marcarConLector(control.signal, modo);
         if (!activo) return;
         setResultado(data);
+        if (data.tokenConfirmacion) setPendiente(data.tokenConfirmacion);
+        if (data.registrada && esAdmin) setRevisionJornadas((revision) => revision + 1);
+        if (data.registrada && modo) setModo("PAUSA");
         setMensaje("");
         setLectorNoDisponible(false);
       } catch (error) {
@@ -95,7 +133,24 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
       clearTimeout(timer);
       control?.abort();
     };
-  }, [visible]);
+  }, [visible, modo, esAdmin, pendiente]);
+  useEffect(() => {
+    if (!pendiente) return;
+    const timer = setTimeout(() => { setPendiente(null); setModo("PAUSA"); setMensaje("La confirmación venció. Vuelve a marcar tu huella."); }, 30000);
+    return () => clearTimeout(timer);
+  }, [pendiente]);
+  async function confirmar() {
+    if (!pendiente || confirmando) return;
+    setConfirmando(true);
+    try {
+      const marca = await confirmarMarcacion(pendiente, new AbortController().signal);
+      setResultado((previo) => previo ? { ...previo, ...marca, tokenConfirmacion: null, mensaje: null } : previo);
+      if (esAdmin) setRevisionJornadas((revision) => revision + 1);
+      setMensaje("");
+    } catch (error) { setMensaje(mensajeError(error)); }
+    finally { setPendiente(null); setModo("PAUSA"); setConfirmando(false); }
+  }
+  function cancelarConfirmacion() { if (!confirmando) { setPendiente(null); setResultado(null); setModo("PAUSA"); } }
   const datos = resultado?.personal;
   const campos = [
     ["Código", datos?.codigo],
@@ -104,7 +159,9 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
     ["Estado", datos?.estado],
   ];
   const horaMarcacion = resultado?.fechaHora?.slice(11, 19) || "";
-  const estado = !visible
+  const estado = modo === "PAUSA"
+    ? "Selecciona el tipo de marcación"
+    : !visible
     ? "Lectura suspendida"
     : mensaje
       ? "Revisar lector"
@@ -131,6 +188,13 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
           </Button>
         </header>
       )}
+      {pendiente && <div className="overlay" onKeyDown={(event) => { if (event.key === "Escape") cancelarConfirmacion(); }}>
+        <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="confirmacion-marcacion">
+          <div className="dialog-head"><h2 id="confirmacion-marcacion">Confirmar marcación</h2></div>
+          <div style={{ padding: "20px 25px" }}><p>{resultado?.personal.nombres}</p><p>{resultado?.mensaje}</p><p>Hora registrada: {resultado?.fechaHora.slice(11, 19)}</p></div>
+          <div className="dialog-actions"><Button type="button" variant="secondary" disabled={confirmando} onClick={cancelarConfirmacion}>Cancelar</Button><Button type="button" disabled={confirmando} autoFocus onClick={() => void confirmar()}>{confirmando ? "Registrando..." : "Sí, marcar"}</Button></div>
+        </div>
+      </div>}
       <div className="lector-contenido">
         <div className="lector-cabecera">
           <div>
@@ -150,6 +214,9 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
         <div className="lector-principal">
           <PanelCaptura
             estado={estado}
+            modo={modo}
+            onModoChange={setModo}
+            pausado={modo === "PAUSA"}
             mensaje={mensaje}
             resultado={resultado}
             horaMarcacion={horaMarcacion}
@@ -197,6 +264,12 @@ export default function LectorBiometrico({ onBack }: { onBack?: () => void }) {
         <TablaJornadas
           jornada={resultado?.jornada}
           identificado={!!resultado}
+          jornadas={esAdmin ? jornadas : undefined}
+          permisos={esAdmin ? permisos : resultado?.permisos ?? []}
+          cargando={esAdmin && cargandoJornadas && jornadas.length === 0}
+          cargandoPermisos={esAdmin && cargandoPermisos && permisos.length === 0}
+          errorJornadas={esAdmin ? errorJornadas : ""}
+          errorPermisos={esAdmin ? errorPermisos : ""}
         />
       </div>
     </div>

@@ -360,3 +360,37 @@
   width: 100%;
   margin-top: 8px;
 }
+
+/* Distribución de la ficha de personal basada en DNX. */
+.empleado-form-head { background: #0d9588; color: white; padding: 14px 20px; gap: 12px; flex-wrap: wrap; }
+.empleado-form-titulo, .empleado-form-acciones { display: flex; align-items: center; gap: 10px; }
+.empleado-form-head h1 { margin: 0; color: white; font-size: 17px; }
+.empleado-form-head .button { padding: 9px 12px; }
+.empleado-form-layout { grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 24px; padding: 26px; }
+.empleado-form-layout .empleado-datos { grid-column: 1; grid-row: 1; padding: 0; align-content: start; }
+.empleado-form-layout .employee-media { grid-column: 2; grid-row: 1; margin: 0; display: flex; flex-direction: column; }
+.empleado-form-layout .employee-photo { width: 100%; height: 240px; }
+.employee-camera { width: 100%; display: grid; gap: 8px; }
+.employee-camera video { width: 100%; max-height: 240px; background: #102c2a; border-radius: 8px; }
+@media (max-width: 850px) {
+  .empleado-form-layout { grid-template-columns: 1fr; padding: 20px; }
+  .empleado-form-layout .empleado-datos { grid-column: 1; grid-row: 1; }
+  .empleado-form-layout .employee-media { grid-column: 1; grid-row: 2; margin: 0; }
+}
+@media (max-width: 500px) { .empleado-espacio { display: none; } .empleado-form-layout .employee-media { margin: 0; } }
+.empleado-consulta-dni { display: flex; gap: 8px; }
+.empleado-consulta-dni input { flex: 1; min-width: 0; }
+.empleado-consulta-dni .button { flex: none; }
+
+/* Foto y huella en la columna lateral de la ficha. */
+.empleado-form-layout .employee-media { gap: 10px; }
+.empleado-form-layout .employee-media-details { width: 100%; gap: 8px; }
+.empleado-form-layout .fingerprint-preview { order: 3; width: 100%; padding-top: 14px; border-top: 1px solid #e3efed; justify-content: center; }
+.empleado-form-layout .fingerprint-status { order: 4; width: 100%; padding-top: 0; border-top: 0; }
+.empleado-form-layout .fingerprint-preview canvas,
+.empleado-form-layout .fingerprint-preview-empty { width: 100%; height: 245px; }
+.empleado-form-layout .fingerprint-preview canvas { object-fit: contain; }
+@media (max-width: 500px) {
+  .empleado-form-layout .fingerprint-preview canvas,
+  .empleado-form-layout .fingerprint-preview-empty { height: 200px; }
+}

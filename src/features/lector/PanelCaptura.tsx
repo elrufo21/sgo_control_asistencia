@@ -1,19 +1,26 @@
 import { CheckCircle2, Fingerprint, Info, ShieldCheck } from "lucide-react";
 
+import { Button } from "../../shared/ui/Controls";
 import type { ResultadoLector } from "./api";
 
 export default function PanelCaptura({
   estado,
+  modo,
+  onModoChange,
   mensaje,
   resultado,
   horaMarcacion,
   lectorNoDisponible,
+  pausado,
 }: {
   estado: string;
+  modo: string;
+  onModoChange: (modo: string) => void;
   mensaje: string;
   resultado: ResultadoLector | null;
   horaMarcacion: string;
   lectorNoDisponible: boolean;
+  pausado: boolean;
 }) {
   const noReconocida = mensaje.startsWith("Huella no reconocida.");
   return (
@@ -23,11 +30,31 @@ export default function PanelCaptura({
       }
       aria-labelledby="captura-titulo"
     >
-      <div className="lector-captura-head">
-        <span className="lector-seccion">LECTOR BIOMÉTRICO</span>
-        <span className={"lector-indicador " + (mensaje ? "con-error" : "")}>
-          <i /> {noReconocida ? "Huella no reconocida" : estado}
-        </span>
+      <div className="lector-modos" role="group" aria-label="Tipo de marcación" title={estado}>
+        <Button
+          type="button"
+          variant={modo === "" ? undefined : "secondary"}
+          aria-pressed={modo === ""}
+          onClick={() => onModoChange("")}
+        >
+          Asistencia
+        </Button>
+        <Button
+          type="button"
+          variant={modo === "SALIDA" ? undefined : "secondary"}
+          aria-pressed={modo === "SALIDA"}
+          onClick={() => onModoChange("SALIDA")}
+        >
+          Salida por permiso
+        </Button>
+        <Button
+          type="button"
+          variant={modo === "RETORNO" ? undefined : "secondary"}
+          aria-pressed={modo === "RETORNO"}
+          onClick={() => onModoChange("RETORNO")}
+        >
+          Retorno de permiso
+        </Button>
       </div>
       <div className="lector-huella-visual">
         <div className="lector-huella-anillo">
@@ -35,24 +62,28 @@ export default function PanelCaptura({
         </div>
       </div>
       <h2 id="captura-titulo">
-        {noReconocida
-          ? "Huella no reconocida"
-          : lectorNoDisponible
-            ? "No se detectó el lector de huella"
-          : resultado
-            ? resultado.registrada
-              ? "¡Marcación registrada!"
-              : "Personal identificado"
-            : "Coloca tu dedo en el lector"}
+        {pausado
+          ? "Selecciona el tipo de marcación"
+          : noReconocida
+            ? "Huella no reconocida"
+            : lectorNoDisponible
+              ? "No se detectó el lector de huella"
+              : resultado
+                ? resultado.registrada
+                  ? "¡Marcación registrada!"
+                  : "Personal identificado"
+                : "Coloca tu dedo en el lector"}
       </h2>
       <p>
-        {noReconocida
-          ? "Retira el dedo y vuelve a intentarlo."
-          : lectorNoDisponible
-            ? "La marcación por huella estará disponible cuando se conecte el lector."
-          : resultado
-            ? "Retira tu dedo del lector para finalizar."
-            : "Apoya el dedo registrado y espera la confirmación en pantalla."}
+        {pausado
+          ? "El lector está en pausa."
+          : noReconocida
+            ? "Retira el dedo y vuelve a intentarlo."
+            : lectorNoDisponible
+              ? "La marcación por huella estará disponible cuando se conecte el lector."
+              : resultado
+                ? "Retira tu dedo del lector para finalizar."
+                : "Apoya el dedo registrado y espera la confirmación en pantalla."}
       </p>
       <div className="lector-aviso" aria-live="polite">
         {mensaje ? (

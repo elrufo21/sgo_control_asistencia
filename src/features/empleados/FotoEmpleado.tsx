@@ -27,6 +27,14 @@ export default function FotoEmpleado({
   onHuellaRegistrada: () => void;
 }) {
   const [preview, setPreview] = useState("");
+  const [camara, setCamara] = useState<MediaStream | null>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const montado = useRef(true);
+  useEffect(() => () => { montado.current = false; }, []);
+  useEffect(() => {
+    if (video.current && camara) video.current.srcObject = camara;
+    return () => { camara?.getTracks().forEach((track) => track.stop()); };
+  }, [camara]);
   const [lecturas, setLecturas] = useState(0),
     [capturando, setCapturando] = useState(false),
     [huella, setHuella] = useState(Boolean(empleado.tieneHuella)),
@@ -73,6 +81,29 @@ export default function FotoEmpleado({
     setFoto(null);
     setEliminar(true);
     setError("");
+  }
+  async function iniciarCamara() {
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error("La cámara no está disponible en este navegador.");
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (!montado.current) { stream.getTracks().forEach((track) => track.stop()); return; }
+      setCamara(stream); setError("");
+    } catch (error) { setError(mensajeError(error)); }
+  }
+  function tomarFoto() {
+    const elemento = video.current;
+    if (!elemento || !elemento.videoWidth || !elemento.videoHeight) { setError("Espera a que la cámara esté lista."); return; }
+    const canvas = document.createElement("canvas");
+    canvas.width = elemento.videoWidth; canvas.height = elemento.videoHeight;
+    const contexto = canvas.getContext("2d");
+    if (!contexto) { setError("No se pudo capturar la foto."); return; }
+    contexto.drawImage(elemento, 0, 0);
+    canvas.toBlob((blob) => {
+      if (!montado.current) return;
+      if (!blob || blob.size > 3 * 1024 * 1024) { setError("La foto debe pesar como máximo 3 MB."); return; }
+      setFoto(new File([blob], "captura.jpg", { type: "image/jpeg" }));
+      setEliminar(false); setCamara(null); setError("");
+    }, "image/jpeg", 0.9);
   }
   async function capturar() {
     if (!empleado.id || control.current) return;
@@ -156,15 +187,14 @@ export default function FotoEmpleado({
         iconSize={42}
       />
       <div className="employee-media-details">
-        <strong>Fotografía</strong>
-        <span>JPG, PNG o WEBP · máximo 3 MB</span>
-        <label className="photo-upload">
+        <label className="photo-upload" title="JPG, PNG o WEBP; máximo 3 MB">
           <Camera size={16} /> Seleccionar foto
           <FileInput
             accept="image/jpeg,image/png,image/webp"
             onChange={seleccionar}
           />
         </label>
+        {!camara ? <Button type="button" variant="secondary" onClick={() => void iniciarCamara()}><Camera size={16} /> Tomar foto</Button> : <div className="employee-camera"><video ref={video} autoPlay playsInline muted aria-label="Vista previa de cámara" /><div><Button type="button" onClick={tomarFoto}>Capturar</Button> <Button type="button" variant="secondary" onClick={() => setCamara(null)}>Cerrar cámara</Button></div></div>}
         {(foto || (!eliminar && empleado.tieneFoto)) && (
           <Button type="button" variant="secondary" onClick={quitar}>
             Quitar foto
@@ -208,8 +238,7 @@ export default function FotoEmpleado({
           </div>}
         </div>
       </div>
-      {empleado.id && (
-        <div className="fingerprint-preview">
+      <div className="fingerprint-preview">
           {imagenHuella ? (
             <ImagenHuellaVista imagen={imagenHuella} />
           ) : (
@@ -217,8 +246,7 @@ export default function FotoEmpleado({
               <Fingerprint size={38} />
             </div>
           )}
-        </div>
-      )}
+      </div>
     </div>
   );
 }

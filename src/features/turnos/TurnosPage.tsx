@@ -32,6 +32,11 @@ export function TurnosPage() {
           salida: campo(datos, "salida"),
           marcaciones: campo(datos, "marcaciones") === "2" ? 2 : 4,
           estado: estadoRegistro(datos),
+          salidaRefrigerio: campo(datos, "salidaRefrigerio") || null,
+          retornoRefrigerio: campo(datos, "retornoRefrigerio") || null,
+          toleranciaAntes: Number(campo(datos, "toleranciaAntes")),
+          toleranciaDespues: Number(campo(datos, "toleranciaDespues")),
+          minutosEntre: Number(campo(datos, "minutosEntre")),
         })
       }
       campos={(turno) => (
@@ -61,6 +66,11 @@ export function TurnosPage() {
               <option value="4">4 · Con refrigerio</option>
             </Select>
           </Field>
+          <Field label="Salida a refrigerio (turnos de 4 marcas)"><TextInput name="salidaRefrigerio" type="time" defaultValue={turno?.salidaRefrigerio ?? ""} /></Field>
+          <Field label="Retorno de refrigerio (turnos de 4 marcas)"><TextInput name="retornoRefrigerio" type="time" defaultValue={turno?.retornoRefrigerio ?? ""} /></Field>
+          <Field label="Minutos antes de cada hora"><TextInput name="toleranciaAntes" type="number" min="0" max="720" step="1" required defaultValue={turno?.toleranciaAntes ?? 60} /></Field>
+          <Field label="Minutos después de cada hora"><TextInput name="toleranciaDespues" type="number" min="0" max="720" step="1" required defaultValue={turno?.toleranciaDespues ?? 60} /></Field>
+          <Field label="Separación mínima entre marcas (min)"><TextInput name="minutosEntre" type="number" min="1" max="1440" step="1" required defaultValue={turno?.minutosEntre ?? 60} /></Field>
           <CampoEstado estado={turno?.estado} />
         </>
       )}

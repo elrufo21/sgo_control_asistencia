@@ -109,18 +109,6 @@ p {
   border-color: #d9e5e7;
   box-shadow: none;
 }
-.overview {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: white;
-  border: 1px solid #e4edef;
-  border-radius: 11px;
-  padding: 20px 22px;
-  margin-bottom: 24px;
-  box-shadow: 0 3px 12px #1a596008;
-}
-.overview-icon,
 .empty-icon {
   display: grid;
   place-items: center;
@@ -129,32 +117,6 @@ p {
   border-radius: 10px;
   width: 52px;
   height: 52px;
-}
-.overview span {
-  display: block;
-  color: #8ba0a7;
-  font-size: 12px;
-}
-.overview strong {
-  display: block;
-  font:
-    800 24px Manrope,
-    sans-serif;
-  margin-top: 3px;
-}
-.overview-note {
-  margin-left: auto;
-}
-.overview-note span {
-  display: inline-block;
-  font-size: 11px;
-}
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #35b5a0;
-  margin-right: 7px;
 }
 .panel {
   background: white;
@@ -375,9 +337,6 @@ td {
   }
   .search {
     width: 100%;
-  }
-  .overview-note {
-    display: none;
   }
 }
 @media (max-width: 500px) {

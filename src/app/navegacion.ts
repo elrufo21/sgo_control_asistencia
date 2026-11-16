@@ -15,6 +15,7 @@ export const navegacion = [
   { id: "usuarios", titulo: "Usuarios", icono: UserRound },
   { id: "areas", titulo: "Áreas", icono: Building2 },
   { id: "feriados", titulo: "Feriados", icono: CalendarDays },
+  { id: "permisos", titulo: "Permisos por horas", icono: ClipboardList },
   { id: "turnos", titulo: "Turnos", icono: Clock3 },
   { id: "reporte", titulo: "Reporte de asistencia", icono: ClipboardList },
 ] as const;

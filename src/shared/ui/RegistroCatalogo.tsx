@@ -17,6 +17,9 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   guardar,
   eliminar,
   campos,
+  filtros,
+  filtrar,
+  resetPageOn,
 }: {
   titulo: string;
   singular: string;
@@ -27,6 +30,9 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   guardar: (id: number | undefined, datos: FormData) => Promise<void>;
   eliminar?: (id: number) => Promise<void>;
   campos: (fila: Fila | undefined) => ReactNode;
+  filtros?: ReactNode;
+  filtrar?: (fila: Fila) => boolean;
+  resetPageOn?: unknown;
 }) {
   const { datos, cargando, error, recargar } = useConsulta(listar);
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
@@ -91,12 +97,13 @@ export function RegistroCatalogo<Fila extends { id: number }>({
       <ErrorVista mensaje={error || (!edicion ? errorOperacion : "")} />
       <Listado
         titulo={`Listado de ${titulo.toLowerCase()}`}
-        resumen={`Total de ${titulo.toLowerCase()}`}
         icono={icono}
-        filas={datos ?? []}
+        filas={filtrar ? (datos ?? []).filter(filtrar) : (datos ?? [])}
+        filtros={filtros}
+        resetPageOn={resetPageOn}
         columnas={columnas}
         cargando={cargando}
-        accionResumen={
+        accionCabecera={
           <Button type="button" disabled={operacion} onClick={() => abrir()}>
             <Plus size={18} /> Nuevo {singular}
           </Button>

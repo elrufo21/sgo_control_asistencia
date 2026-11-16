@@ -25,8 +25,12 @@ async function enviar<T>(ruta: string, signal: AbortSignal, body: object = {}, a
   return datos as T;
 }
 
-export function marcarLocal<T>(signal: AbortSignal) {
-  return enviar<T>("/marcar", signal);
+export function marcarLocal<T>(signal: AbortSignal, modo: string) {
+  return enviar<T>("/marcar", signal, { modo });
+}
+
+export function confirmarLocal<T>(signal: AbortSignal, tokenConfirmacion: string) {
+  return enviar<T>("/confirmar", signal, { token: tokenConfirmacion });
 }
 
 export function capturarLocal<T>(id: number, signal: AbortSignal) {

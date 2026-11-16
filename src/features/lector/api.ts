@@ -1,5 +1,5 @@
 import { consultar } from "../../shared/api/http";
-import { marcarLocal, usaLectorLocal } from "../../shared/api/lectorLocal";
+import { confirmarLocal, marcarLocal, usaLectorLocal } from "../../shared/api/lectorLocal";
 
 export type Jornada = {
   id: number;
@@ -13,9 +13,19 @@ export type Jornada = {
   marcacionesProgramadas?: number;
 };
 
+export type PermisoLector = {
+  id: number;
+  fecha: string;
+  nombres: string;
+  salida: string | null;
+  retorno: string | null;
+  estado: string;
+};
+
 export type ResultadoLector = {
   registrada: boolean;
   tipo: string | null;
+  tokenConfirmacion?: string | null;
   mensaje: string | null;
   fechaHora: string;
   personal: {
@@ -27,12 +37,26 @@ export type ResultadoLector = {
     foto: string | null;
   };
   jornada: Jornada | null;
+  permisos?: PermisoLector[];
 };
 
-export function marcarConLector(signal: AbortSignal) {
-  if (usaLectorLocal) return marcarLocal<ResultadoLector>(signal);
-  return consultar<ResultadoLector>("lector/marcar", {
+export function marcarConLector(signal: AbortSignal, modo: string) {
+  if (usaLectorLocal) return marcarLocal<ResultadoLector>(signal, modo);
+  return consultar<ResultadoLector>(`lector/marcar${modo ? `?modo=${modo}` : ""}`, {
     method: "POST",
     signal,
   });
+}
+
+export function consultarJornadasHoy(signal: AbortSignal) {
+  return consultar<Jornada[]>("lector/jornadas-hoy", { signal, cache: "no-store" });
+}
+
+export function consultarPermisosHoy(signal: AbortSignal) {
+  return consultar<PermisoLector[]>("lector/permisos-hoy", { signal, cache: "no-store" });
+}
+
+export function confirmarMarcacion(token: string, signal: AbortSignal) {
+  if (usaLectorLocal) return confirmarLocal<{ registrada: boolean; tipo: string; fechaHora: string; jornada: Jornada | null }>(signal, token);
+  return consultar<{ registrada: boolean; tipo: string; fechaHora: string; jornada: Jornada | null }>("lector/confirmar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }), signal });
 }
