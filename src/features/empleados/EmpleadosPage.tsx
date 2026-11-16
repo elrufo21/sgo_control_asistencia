@@ -4,6 +4,7 @@ import { useConsulta } from "../../shared/hooks/useConsulta";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import { Listado, type Columna } from "../../shared/ui/Listado";
 import { Button } from "../../shared/ui/Controls";
+import { FiltroEstado, type FiltroEstadoValor } from "../../shared/ui/FiltroEstado";
 import { listarAreas } from "../areas/api";
 import { listarTurnos } from "../turnos/api";
 import { listarEmpleados, type Empleado } from "./api";
@@ -27,6 +28,7 @@ export function EmpleadosPage({
   const empleados = useConsulta(listarEmpleados);
   const areas = useConsulta(listarAreas);
   const turnos = useConsulta(listarTurnos);
+  const [estado, setEstado] = useState<FiltroEstadoValor>("");
   const [ficha, setFicha] = useState<{ empleado?: Empleado }>();
   const [horario, setHorario] = useState<Empleado>();
   const opcionesCargando = areas.cargando || turnos.cargando;
@@ -38,12 +40,13 @@ export function EmpleadosPage({
       <div hidden={!!ficha}>
         <Listado
           titulo="Listado de empleados"
-          resumen="Total de empleados"
           icono={Users}
           columnas={columnas}
-          filas={empleados.datos ?? []}
+          filas={(empleados.datos ?? []).filter((empleado) => !estado || empleado.estado === estado)}
+          filtros={<FiltroEstado value={estado} onChange={setEstado} />}
+          resetPageOn={estado}
           cargando={empleados.cargando}
-          accionResumen={
+          accionCabecera={
             <Button
               type="button"
               disabled={!opcionesDisponibles || opcionesCargando}

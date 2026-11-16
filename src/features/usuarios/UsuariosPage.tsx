@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { FiltroEstado, type FiltroEstadoValor } from "../../shared/ui/FiltroEstado";
 import { UserRound } from "lucide-react";
 import { listarEmpleados } from "../empleados/api";
 import { useConsulta } from "../../shared/hooks/useConsulta";
@@ -15,6 +17,7 @@ import { eliminarUsuario, guardarUsuario, listarUsuarios } from "./api";
 
 export function UsuariosPage() {
   const empleados = useConsulta(listarEmpleados);
+  const [estado, setEstado] = useState<FiltroEstadoValor>("");
   if (!empleados.datos) {
     return (
       <>
@@ -32,6 +35,9 @@ export function UsuariosPage() {
         descripcion="Administra los accesos al sistema."
         icono={UserRound}
         listar={listarUsuarios}
+        filtros={<FiltroEstado value={estado} onChange={setEstado} />}
+        filtrar={(usuario) => !estado || usuario.estado === estado}
+        resetPageOn={estado}
         eliminar={eliminarUsuario}
         columnas={[
           ["usuario", "Usuario"],

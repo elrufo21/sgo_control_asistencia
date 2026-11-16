@@ -40,7 +40,6 @@ export function ReportePage() {
       <ErrorVista mensaje={error} />
       <Listado
         titulo="Consulta de asistencia"
-        resumen="Registros encontrados"
         icono={ClipboardList}
         filas={datos ?? []}
         columnas={columnas}

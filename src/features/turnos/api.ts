@@ -11,6 +11,11 @@ export type DatosTurno = {
   salida: string;
   estado: Estado;
   marcaciones: 2 | 4;
+  salidaRefrigerio: string | null;
+  retornoRefrigerio: string | null;
+  toleranciaAntes: number;
+  toleranciaDespues: number;
+  minutosEntre: number;
 };
 export type Turno = DatosTurno & { id: number };
 export const listarTurnos = opcionesCatalogo<Turno>("turnos");

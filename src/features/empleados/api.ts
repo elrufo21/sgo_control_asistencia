@@ -12,6 +12,9 @@ export type DatosEmpleado = {
   dni: string;
   areaId: number | null;
   turnoId: number | null;
+  nacimiento?: string | null;
+  direccion?: string | null;
+  ingreso?: string | null;
   telefono: string | null;
   email: string | null;
   estado: Estado;

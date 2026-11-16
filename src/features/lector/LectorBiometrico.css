@@ -507,3 +507,12 @@
     height: 19px;
   }
 }
+
+.lector-modos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; text-align: left; }
+.lector-modos .button { min-height: 40px; padding: 8px 11px; font-size: 12px; }
+@media (max-width: 500px) { .lector-modos .button { flex: 1 1 auto; } }
+
+.lector-tabs { display: inline-flex; align-items: center; gap: 3px; padding: 3px; background: #f2f7f6; border: 1px solid #e1ecea; border-radius: 8px; }
+.lector-tabs button { min-height: 34px; padding: 6px 12px; border: 0; border-radius: 6px; background: transparent; color: #668580; font-size: 12px; font-weight: 700; }
+.lector-tabs button[aria-pressed="true"] { background: #fff; color: #087e77; box-shadow: 0 1px 4px #123f4b1a; }
+.lector-tabs button:focus-visible { outline: 2px solid #0d9588; outline-offset: 1px; }

@@ -35,7 +35,8 @@ export default function HorarioSemanal({
       nombre: "",
       entrada: "",
       salida: "",
-      marcaciones: "4",
+      marcaciones: "4", salidaRefrigerio: "", retornoRefrigerio: "",
+      toleranciaAntes: "60", toleranciaDespues: "60", minutosEntre: "60",
     });
   useEffect(() => {
     let active = true;
@@ -86,6 +87,9 @@ export default function HorarioSemanal({
         ...nuevo,
         nombre: nuevo.nombre.trim(),
         marcaciones: nuevo.marcaciones === "2" ? 2 : 4,
+        salidaRefrigerio: nuevo.salidaRefrigerio || null,
+        retornoRefrigerio: nuevo.retornoRefrigerio || null,
+        toleranciaAntes: Number(nuevo.toleranciaAntes), toleranciaDespues: Number(nuevo.toleranciaDespues), minutosEntre: Number(nuevo.minutosEntre),
         estado: "ACTIVO",
       });
       creado = true;
@@ -94,7 +98,7 @@ export default function HorarioSemanal({
       const agregado = actualizados.find((t) => !anteriorIds.has(t.id));
       setCatalogo(actualizados);
       if (agregado) setTurnoRapido(String(agregado.id));
-      setNuevo({ nombre: "", entrada: "", salida: "", marcaciones: "4" });
+      setNuevo({ nombre: "", entrada: "", salida: "", marcaciones: "4", salidaRefrigerio: "", retornoRefrigerio: "", toleranciaAntes: "60", toleranciaDespues: "60", minutosEntre: "60" });
       setCrearTurno(false);
     } catch (e) {
       setError(
@@ -216,6 +220,10 @@ export default function HorarioSemanal({
                       <option value="4">4 · Con refrigerio</option>
                     </Select>
                   </Field>
+                  {nuevo.marcaciones === "4" && <><Field label="Salida a refrigerio"><TextInput type="time" value={nuevo.salidaRefrigerio} onChange={(e) => setNuevo({ ...nuevo, salidaRefrigerio: e.target.value })} /></Field><Field label="Retorno de refrigerio"><TextInput type="time" value={nuevo.retornoRefrigerio} onChange={(e) => setNuevo({ ...nuevo, retornoRefrigerio: e.target.value })} /></Field></>}
+                  <Field label="Minutos antes"><TextInput type="number" min="0" max="720" value={nuevo.toleranciaAntes} onChange={(e) => setNuevo({ ...nuevo, toleranciaAntes: e.target.value })} /></Field>
+                  <Field label="Minutos después"><TextInput type="number" min="0" max="720" value={nuevo.toleranciaDespues} onChange={(e) => setNuevo({ ...nuevo, toleranciaDespues: e.target.value })} /></Field>
+                  <Field label="Separación mínima (min)"><TextInput type="number" min="1" max="1440" value={nuevo.minutosEntre} onChange={(e) => setNuevo({ ...nuevo, minutosEntre: e.target.value })} /></Field>
                 </div>
                 <Button type="button" onClick={agregarTurno} disabled={busy}>
                   {busy ? "Guardando..." : "Guardar turno"}

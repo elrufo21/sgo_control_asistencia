@@ -6,6 +6,7 @@ import {
 } from "../features/auth/api";
 import { LoginPage } from "../features/auth/LoginPage";
 import { AreasPage } from "../features/areas/AreasPage";
+import { PermisosPage } from "../features/permisos/PermisosPage";
 import { ReportePage } from "../features/asistencia/ReportePage";
 import { EmpleadosPage } from "../features/empleados/EmpleadosPage";
 import { FeriadosPage } from "../features/feriados/FeriadosPage";
@@ -70,13 +71,14 @@ export function App() {
   }
 
   const vistas = {
-    lector: <LectorBiometrico />,
+    lector: <LectorBiometrico esAdmin={sesion.rol === "ADMIN"} />,
     empleados: <EmpleadosPage protegerSalida={protegerSalida} />,
     usuarios: <UsuariosPage />,
     areas: <AreasPage />,
     feriados: <FeriadosPage />,
     turnos: <TurnosPage />,
     reporte: <ReportePage />,
+    permisos: <PermisosPage />,
   };
   const paginaActual = sesion.rol === "ADMIN" ? pagina : "lector";
 
