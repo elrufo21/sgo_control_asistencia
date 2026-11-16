@@ -28,7 +28,7 @@ export function EmpleadosPage({
   const empleados = useConsulta(listarEmpleados);
   const areas = useConsulta(listarAreas);
   const turnos = useConsulta(listarTurnos);
-  const [estado, setEstado] = useState<FiltroEstadoValor>("");
+  const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   const [ficha, setFicha] = useState<{ empleado?: Empleado }>();
   const [horario, setHorario] = useState<Empleado>();
   const opcionesCargando = areas.cargando || turnos.cargando;
@@ -42,7 +42,7 @@ export function EmpleadosPage({
           titulo="Listado de empleados"
           icono={Users}
           columnas={columnas}
-          filas={(empleados.datos ?? []).filter((empleado) => !estado || empleado.estado === estado)}
+          filas={(empleados.datos ?? []).filter((empleado) => empleado.estado === estado)}
           filtros={<FiltroEstado value={estado} onChange={setEstado} />}
           resetPageOn={estado}
           cargando={empleados.cargando}

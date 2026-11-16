@@ -17,7 +17,7 @@ import { eliminarUsuario, guardarUsuario, listarUsuarios } from "./api";
 
 export function UsuariosPage() {
   const empleados = useConsulta(listarEmpleados);
-  const [estado, setEstado] = useState<FiltroEstadoValor>("");
+  const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   if (!empleados.datos) {
     return (
       <>
@@ -36,7 +36,7 @@ export function UsuariosPage() {
         icono={UserRound}
         listar={listarUsuarios}
         filtros={<FiltroEstado value={estado} onChange={setEstado} />}
-        filtrar={(usuario) => !estado || usuario.estado === estado}
+        filtrar={(usuario) => usuario.estado === estado}
         resetPageOn={estado}
         eliminar={eliminarUsuario}
         columnas={[
