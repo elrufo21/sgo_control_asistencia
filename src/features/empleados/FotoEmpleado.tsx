@@ -5,7 +5,11 @@ import TextInput from "../../shared/ui/TextInput";
 import FotoPersonal from "../../shared/ui/FotoPersonal";
 import { capturarHuella, type Empleado, type ImagenHuella } from "./api";
 import { ApiError, mensajeError, urlApi } from "../../shared/api/http";
-import { iniciarSesionLector, tieneSesionLector, usaLectorLocal } from "../../shared/api/lectorLocal";
+import {
+  iniciarSesionLector,
+  tieneSesionLector,
+  usaLectorLocal,
+} from "../../shared/api/lectorLocal";
 import { ImagenHuellaVista } from "./ImagenHuellaVista";
 import { useConfirmacion } from "../../shared/ui/Confirmacion";
 
@@ -30,10 +34,17 @@ export default function FotoEmpleado({
   const [camara, setCamara] = useState<MediaStream | null>(null);
   const video = useRef<HTMLVideoElement>(null);
   const montado = useRef(true);
-  useEffect(() => () => { montado.current = false; }, []);
+  useEffect(
+    () => () => {
+      montado.current = false;
+    },
+    [],
+  );
   useEffect(() => {
     if (video.current && camara) video.current.srcObject = camara;
-    return () => { camara?.getTracks().forEach((track) => track.stop()); };
+    return () => {
+      camara?.getTracks().forEach((track) => track.stop());
+    };
   }, [camara]);
   const [lecturas, setLecturas] = useState(0),
     [capturando, setCapturando] = useState(false),
@@ -84,26 +95,49 @@ export default function FotoEmpleado({
   }
   async function iniciarCamara() {
     try {
-      if (!navigator.mediaDevices?.getUserMedia) throw new Error("La cámara no está disponible en este navegador.");
+      if (!navigator.mediaDevices?.getUserMedia)
+        throw new Error("La cámara no está disponible en este navegador.");
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (!montado.current) { stream.getTracks().forEach((track) => track.stop()); return; }
-      setCamara(stream); setError("");
-    } catch (error) { setError(mensajeError(error)); }
+      if (!montado.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+      setCamara(stream);
+      setError("");
+    } catch (error) {
+      setError(mensajeError(error));
+    }
   }
   function tomarFoto() {
     const elemento = video.current;
-    if (!elemento || !elemento.videoWidth || !elemento.videoHeight) { setError("Espera a que la cámara esté lista."); return; }
+    if (!elemento || !elemento.videoWidth || !elemento.videoHeight) {
+      setError("Espera a que la cámara esté lista.");
+      return;
+    }
     const canvas = document.createElement("canvas");
-    canvas.width = elemento.videoWidth; canvas.height = elemento.videoHeight;
+    canvas.width = elemento.videoWidth;
+    canvas.height = elemento.videoHeight;
     const contexto = canvas.getContext("2d");
-    if (!contexto) { setError("No se pudo capturar la foto."); return; }
+    if (!contexto) {
+      setError("No se pudo capturar la foto.");
+      return;
+    }
     contexto.drawImage(elemento, 0, 0);
-    canvas.toBlob((blob) => {
-      if (!montado.current) return;
-      if (!blob || blob.size > 3 * 1024 * 1024) { setError("La foto debe pesar como máximo 3 MB."); return; }
-      setFoto(new File([blob], "captura.jpg", { type: "image/jpeg" }));
-      setEliminar(false); setCamara(null); setError("");
-    }, "image/jpeg", 0.9);
+    canvas.toBlob(
+      (blob) => {
+        if (!montado.current) return;
+        if (!blob || blob.size > 3 * 1024 * 1024) {
+          setError("La foto debe pesar como máximo 3 MB.");
+          return;
+        }
+        setFoto(new File([blob], "captura.jpg", { type: "image/jpeg" }));
+        setEliminar(false);
+        setCamara(null);
+        setError("");
+      },
+      "image/jpeg",
+      0.9,
+    );
   }
   async function capturar() {
     if (!empleado.id || control.current) return;
@@ -114,7 +148,11 @@ export default function FotoEmpleado({
     if (
       huella &&
       lecturas === 0 &&
-      !(await confirmar({ titulo: "Reemplazar huella", mensaje: "¿Deseas reemplazar la huella registrada de este empleado?", confirmar: "Reemplazar" }))
+      !(await confirmar({
+        titulo: "Reemplazar huella",
+        mensaje: "¿Deseas reemplazar la huella registrada de este empleado?",
+        confirmar: "Reemplazar",
+      }))
     )
       return;
     const abort = new AbortController();
@@ -151,7 +189,8 @@ export default function FotoEmpleado({
     } catch (error) {
       if (!abort.signal.aborted) {
         setMensaje(mensajeError(error));
-        if (usaLectorLocal && error instanceof ApiError && error.status === 401) setAccesoLector(true);
+        if (usaLectorLocal && error instanceof ApiError && error.status === 401)
+          setAccesoLector(true);
       }
     } finally {
       if (!abort.signal.aborted) setCapturando(false);
@@ -194,7 +233,37 @@ export default function FotoEmpleado({
             onChange={seleccionar}
           />
         </label>
-        {!camara ? <Button type="button" variant="secondary" onClick={() => void iniciarCamara()}><Camera size={16} /> Tomar foto</Button> : <div className="employee-camera"><video ref={video} autoPlay playsInline muted aria-label="Vista previa de cámara" /><div><Button type="button" onClick={tomarFoto}>Capturar</Button> <Button type="button" variant="secondary" onClick={() => setCamara(null)}>Cerrar cámara</Button></div></div>}
+        {!camara ? (
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => void iniciarCamara()}
+          >
+            <Camera size={16} /> Tomar foto
+          </Button>
+        ) : (
+          <div className="employee-camera">
+            <video
+              ref={video}
+              autoPlay
+              playsInline
+              muted
+              aria-label="Vista previa de cámara"
+            />
+            <div>
+              <Button type="button" onClick={tomarFoto}>
+                Capturar
+              </Button>{" "}
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setCamara(null)}
+              >
+                Cerrar cámara
+              </Button>
+            </div>
+          </div>
+        )}
         {(foto || (!eliminar && empleado.tieneFoto)) && (
           <Button type="button" variant="secondary" onClick={quitar}>
             Quitar foto
@@ -205,12 +274,8 @@ export default function FotoEmpleado({
         <Fingerprint size={20} />
         <div className="fingerprint-info">
           <strong>Huella: {huella ? "registrada" : "sin registrar"}</strong>
-          <span aria-live="polite">
-            {empleado.id
-              ? mensaje ||
-                "Se requieren tres lecturas del mismo dedo. La huella se guarda al terminar."
-              : "Guarda primero al empleado para registrar su huella."}
-          </span>
+          {mensaje && <span aria-live="polite">{mensaje}</span>}
+
           {empleado.id && (
             <Button
               type="button"
@@ -230,22 +295,45 @@ export default function FotoEmpleado({
           {empleado.estado === "INACTIVO" && (
             <span>La captura requiere un empleado activo.</span>
           )}
-          {accesoLector && <div className="lector-acceso">
-            <strong>Verifica tu cuenta de administrador para registrar la huella</strong>
-            <Field label="Usuario"><TextInput value={usuarioLector} onChange={(e) => setUsuarioLector(e.currentTarget.value)} autoComplete="username" /></Field>
-            <Field label="Contraseña"><TextInput type="password" value={claveLector} onChange={(e) => setClaveLector(e.currentTarget.value)} autoComplete="current-password" /></Field>
-            <Button type="button" onClick={conectarLector} disabled={autenticando || !usuarioLector || !claveLector}>{autenticando ? "Conectando..." : "Conectar lector"}</Button>
-          </div>}
+          {accesoLector && (
+            <div className="lector-acceso">
+              <strong>
+                Verifica tu cuenta de administrador para registrar la huella
+              </strong>
+              <Field label="Usuario">
+                <TextInput
+                  value={usuarioLector}
+                  onChange={(e) => setUsuarioLector(e.currentTarget.value)}
+                  autoComplete="username"
+                />
+              </Field>
+              <Field label="Contraseña">
+                <TextInput
+                  type="password"
+                  value={claveLector}
+                  onChange={(e) => setClaveLector(e.currentTarget.value)}
+                  autoComplete="current-password"
+                />
+              </Field>
+              <Button
+                type="button"
+                onClick={conectarLector}
+                disabled={autenticando || !usuarioLector || !claveLector}
+              >
+                {autenticando ? "Conectando..." : "Conectar lector"}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       <div className="fingerprint-preview">
-          {imagenHuella ? (
-            <ImagenHuellaVista imagen={imagenHuella} />
-          ) : (
-            <div className="fingerprint-preview-empty" aria-hidden="true">
-              <Fingerprint size={38} />
-            </div>
-          )}
+        {imagenHuella ? (
+          <ImagenHuellaVista imagen={imagenHuella} />
+        ) : (
+          <div className="fingerprint-preview-empty" aria-hidden="true">
+            <Fingerprint size={38} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -125,13 +125,7 @@ export function AppLayout({
             </button>
           </div>
         </header>
-        <main>
-          {children}
-          <div className="footer">
-            Control de asistencia <span>•</span> Gestión de personal
-            hospitalario
-          </div>
-        </main>
+        <main>{children}</main>
       </div>
     </div>
   );
