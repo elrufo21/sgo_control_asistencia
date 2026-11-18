@@ -215,8 +215,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #e8f4f2;
-  color: #12867c;
+  background: #fceeee;
+  color: #b23636;
 }
 .top-user strong,
 .top-user small {

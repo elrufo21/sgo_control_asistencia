@@ -363,10 +363,14 @@
 }
 
 /* Distribución de la ficha de personal basada en DNX. */
-.empleado-form-head { background: #c60000; color: white; padding: 14px 20px; gap: 12px; flex-wrap: wrap; }
+.empleado-form-head { background: #b23636; color: white; padding: 14px 20px; gap: 12px; flex-wrap: wrap; }
 .empleado-form-titulo, .empleado-form-acciones { display: flex; align-items: center; gap: 10px; }
 .empleado-form-head h1 { margin: 0; color: white; font-size: 17px; }
 .empleado-form-head .button { padding: 9px 12px; }
+form .empleado-form-head .empleado-boton-nuevo { background: #ffffff24; border-color: #ffffff45; color: #fff; }
+form .empleado-form-head .empleado-boton-nuevo:hover { background: #ffffff38; }
+form .empleado-form-head .button:not(.secondary) { background: #c60000; border-color: #ffffff70; color: #fff; box-shadow: none; }
+form .empleado-form-head .button:not(.secondary):hover { background: #a80000; border-color: #fff; }
 .empleado-form-layout { grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 24px; padding: 26px; }
 .empleado-form-layout .empleado-datos { grid-column: 1; grid-row: 1; padding: 0; align-content: start; }
 .empleado-form-layout .employee-media { grid-column: 2; grid-row: 1; margin: 0; display: flex; flex-direction: column; }

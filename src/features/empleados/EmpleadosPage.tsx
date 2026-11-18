@@ -32,6 +32,7 @@ export function EmpleadosPage({
   const turnos = useConsulta(listarTurnos);
   const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   const [ficha, setFicha] = useState<{ empleado?: Empleado }>();
+  const [versionFicha, setVersionFicha] = useState(0);
   const [horario, setHorario] = useState<Empleado>();
   const [eliminando, setEliminando] = useState(false);
   const [errorEliminacion, setErrorEliminacion] = useState("");
@@ -115,12 +116,14 @@ export function EmpleadosPage({
           <p role="status">Cargando el formulario...</p>
         ) : (
           <EmpleadoForm
+            key={versionFicha}
             empleado={ficha.empleado}
             areas={areas.datos ?? []}
             turnos={turnos.datos ?? []}
             protegerSalida={protegerSalida}
             alCerrar={() => setFicha(undefined)}
             alGuardar={empleados.recargar}
+            alNuevo={() => { setFicha({}); setVersionFicha((version) => version + 1); }}
           />
         ))}
       {horario && (

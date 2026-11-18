@@ -102,7 +102,7 @@
 .data-table-footer select, .data-table-footer button { min-height: 36px; border: 1px solid #d9e5e7; border-radius: 8px; background: white; color: #49636d; }
 .data-table-footer select { padding: 0 8px; }
 .data-table-footer button { display: inline-grid; place-items: center; width: 36px; }
-.data-table-footer button:hover:not(:disabled) { background: #e8f6f3; }
+.data-table-footer button:hover:not(:disabled) { background: #fceeee; }
 .data-table-footer button:disabled { opacity: .4; cursor: not-allowed; }
 @media (max-width: 800px) {
   .data-table-toolbar { padding: 16px; }

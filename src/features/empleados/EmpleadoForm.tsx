@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState, type FormEvent } from "react";
-import { ArrowLeft, Save, Search, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Save, Search, Trash2 } from "lucide-react";
 import type { Area } from "../areas/api";
 import type { Turno } from "../turnos/api";
 import { consultar, mensajeError } from "../../shared/api/http";
@@ -36,6 +36,7 @@ export function EmpleadoForm({
   turnos,
   alCerrar,
   alGuardar,
+  alNuevo,
   protegerSalida,
 }: {
   empleado?: Empleado;
@@ -43,6 +44,7 @@ export function EmpleadoForm({
   turnos: Turno[];
   alCerrar: () => void;
   alGuardar: () => void;
+  alNuevo: () => void;
   protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
 }) {
   const campoId = useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -77,6 +79,10 @@ export function EmpleadoForm({
       (!editado || await confirmar({ titulo: "Cambios sin guardar", mensaje: "Si sales ahora, perderás los cambios realizados.", confirmar: "Salir" }))
     )
       alCerrar();
+  }
+
+  async function nuevo() {
+    if (!guardando && !consultandoDni && (!editado || await confirmar({ titulo: "Cambios sin guardar", mensaje: "Al crear una ficha nueva perderás los cambios realizados.", confirmar: "Crear ficha nueva" }))) alNuevo();
   }
 
   async function guardar(evento: FormEvent<HTMLFormElement>) {
@@ -163,6 +169,7 @@ export function EmpleadoForm({
           </div>
           <div className="empleado-form-acciones">
             {empleado && <Button type="button" variant="secondary" disabled={guardando} onClick={eliminar}><Trash2 size={16} /> Eliminar</Button>}
+            <Button type="button" variant="secondary" className="empleado-boton-nuevo" disabled={guardando || consultandoDni} onClick={() => void nuevo()}><Plus size={16} /> Nuevo</Button>
             <Button type="submit" disabled={guardando}><Save size={16} /> {guardando ? "Guardando..." : "Guardar"}</Button>
           </div>
         </div>

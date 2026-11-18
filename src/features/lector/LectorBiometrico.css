@@ -10,18 +10,18 @@
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  background: #123f4b;
+  background: #b23636;
   color: #fff;
   border-radius: 12px;
   padding: 25px 30px;
-  box-shadow: 0 8px 25px #123f4b1a;
+  box-shadow: 0 8px 25px #b236361a;
 }
 .lector-etiqueta,
 .lector-hora > span {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #9accc5;
+  color: #ffdddd;
   font-size: 10px;
   letter-spacing: 1.2px;
   font-weight: 700;
@@ -37,7 +37,7 @@
   text-transform: uppercase;
 }
 .lector-cabecera p {
-  color: #b3d2ce;
+  color: #ffe8e8;
   font-size: 12px;
   margin-top: 5px;
 }
@@ -113,9 +113,9 @@
   margin: 25px auto 18px;
   width: 142px;
   height: 142px;
-  border: 1px solid #d7eee8;
+  border: 1px solid #f0dddd;
   border-radius: 50%;
-  background: #f5fbf9;
+  background: #fffafa;
 }
 .lector-huella-anillo {
   width: 116px;
@@ -123,8 +123,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: #179889;
-  background: #e4f5f0;
+  color: #b23636;
+  background: #faeded;
 }
 .lector-captura.panel h2 {
   font:
@@ -471,8 +471,9 @@
   letter-spacing: -0.7px;
 }
 .lector-marca strong span {
-  color: #159c91;
+  color: #b23636;
 }
+.lector-marca .brand-icon { background: #fce8e8; color: #b23636; }
 .lector-marca small {
   color: #8ca0a7;
   font-size: 9px;
@@ -510,9 +511,11 @@
 
 .lector-modos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; text-align: left; }
 .lector-modos .button { min-height: 40px; padding: 8px 11px; font-size: 12px; }
+.lector-modos .button[aria-pressed="true"] { background: #b23636; border-color: #b23636; color: #fff; box-shadow: none; }
+.lector-modos .button[aria-pressed="true"]:hover { background: #922b2b; border-color: #922b2b; }
 @media (max-width: 500px) { .lector-modos .button { flex: 1 1 auto; } }
 
-.lector-tabs { display: inline-flex; align-items: center; gap: 3px; padding: 3px; background: #f2f7f6; border: 1px solid #e1ecea; border-radius: 8px; }
+.lector-tabs { display: inline-flex; align-items: center; gap: 3px; padding: 3px; background: #fceeee; border: 1px solid #f1d5d5; border-radius: 8px; }
 .lector-tabs button { min-height: 34px; padding: 6px 12px; border: 0; border-radius: 6px; background: transparent; color: #668580; font-size: 12px; font-weight: 700; }
-.lector-tabs button[aria-pressed="true"] { background: #fff; color: #087e77; box-shadow: 0 1px 4px #123f4b1a; }
-.lector-tabs button:focus-visible { outline: 2px solid #0d9588; outline-offset: 1px; }
+.lector-tabs button[aria-pressed="true"] { background: #fff; color: #b23636; box-shadow: 0 1px 4px #123f4b1a; }
+.lector-tabs button:focus-visible { outline: 2px solid #b23636; outline-offset: 1px; }
