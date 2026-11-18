@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FileSpreadsheet } from "lucide-react";
+import { FileText } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { listarEmpleados } from "../empleados/api";
 import { useConsulta } from "../../shared/hooks/useConsulta";
@@ -37,26 +37,16 @@ export function ReportePage() {
   const consultar = useCallback((signal: AbortSignal) => rangoValido ? consultarReporte(desde, hasta, signal) : Promise.resolve([]), [desde, hasta, rangoValido]);
   const reporte = useConsulta(consultar);
   const filas = (rangoValido && (general || personal) ? reporte.datos ?? [] : []).filter((fila) => general || String(fila.personalId) === personal).sort((a, b) => a.fecha.localeCompare(b.fecha) || b.entrada.localeCompare(a.entrada));
-  async function exportarExcel() {
+  async function exportarPdf() {
     setExportando(true);
     setErrorExportacion("");
     try {
-      const { default: ExcelJS } = await import("exceljs");
-      const libro = new ExcelJS.Workbook();
-      const hoja = libro.addWorksheet("Asistencia");
-      hoja.addRow(["Fecha", "Día", "Nombres", "Ingreso", "Salida refrigerio", "Retorno refrigerio", "Salida", "N.º tardanzas", "Asistencia"]);
-      filas.forEach((fila) => hoja.addRow([formatoFecha(fila.fecha), dia(fila.fecha), fila.empleado, fila.entrada, fila.salidaRefrigerio ?? "", fila.retornoRefrigerio ?? "", fila.salida ?? "", fila.tardanzas, fila.estado]));
-      hoja.getRow(1).font = { bold: true };
-      hoja.columns.forEach((columna, indice) => { columna.width = [14, 15, 32, 14, 21, 22, 14, 18, 16][indice]; });
-      const archivo = await libro.xlsx.writeBuffer();
-      const url = URL.createObjectURL(new Blob([archivo], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
-      const enlace = document.createElement("a");
-      enlace.href = url;
-      enlace.download = `asistencia_${desde}_${hasta}.xlsx`;
-      enlace.click();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      const { generarReportePdf } = await import("./reportePdf");
+      const empleado = empleados.datos?.find((fila) => String(fila.id) === personal);
+      const nombre = general ? "Reporte general" : empleado ? `${empleado.nombres} ${empleado.apellidos}` : "Personal seleccionado";
+      generarReportePdf(filas, desde, hasta, nombre).save(`asistencia_${desde}_${hasta}.pdf`);
     } catch {
-      setErrorExportacion("No se pudo generar el archivo Excel.");
+      setErrorExportacion("No se pudo generar el archivo PDF.");
     } finally {
       setExportando(false);
     }
@@ -64,7 +54,7 @@ export function ReportePage() {
   const filtros = <div className="reporte-filtros">
     <Field label="Personal"><Select value={personal} disabled={general || empleados.cargando || !!empleados.error} onChange={(e) => setPersonal(e.currentTarget.value)}><option value="">Seleccionar personal</option>{(empleados.datos ?? []).map((empleado) => <option key={empleado.id} value={empleado.id}>{empleado.nombres} {empleado.apellidos}</option>)}</Select></Field>
     <label className="reporte-general"><input type="checkbox" checked={general} onChange={(e) => { setGeneral(e.currentTarget.checked); if (e.currentTarget.checked) setPersonal(""); }} /> Reporte general</label>
-    <Button type="button" variant="secondary" disabled={!filas.length || reporte.cargando || !!reporte.error || exportando} onClick={() => void exportarExcel()}><FileSpreadsheet size={16} /> {exportando ? "Exportando..." : "Excel"}</Button>
+    <Button type="button" variant="secondary" disabled={!filas.length || reporte.cargando || !!reporte.error || exportando} onClick={() => void exportarPdf()}><FileText size={16} /> {exportando ? "Exportando..." : "PDF"}</Button>
     <div className="reporte-fechas"><Field label="Fecha inicio"><TextInput type="date" value={desde} onChange={(e) => setDesde(e.currentTarget.value)} /></Field><Field label="Fecha fin"><TextInput type="date" value={hasta} onChange={(e) => setHasta(e.currentTarget.value)} /></Field></div>
   </div>;
   return <>

@@ -59,12 +59,14 @@ export function UsuariosPage() {
         }}
         campos={(usuario) => (
           <>
+            <TextInput type="hidden" name="rol" value={usuario?.rol ?? "EMPLEADO"} readOnly />
             <Field label="Personal">
               <Select
                 name="personalId"
                 defaultValue={usuario?.personalId ?? ""}
+                required={usuario?.rol !== "ADMIN"}
               >
-                <option value="">Sin asignar</option>
+                <option value="">{usuario?.rol === "ADMIN" ? "Sin asignar" : "Seleccione personal"}</option>
                 {empleados.datos?.map(({ id, nombres, apellidos }) => (
                   <option key={id} value={id}>
                     {nombres} {apellidos}
@@ -80,12 +82,6 @@ export function UsuariosPage() {
             </Field>
             <Field label="Confirmar contraseña">
               <TextInput name="confirmarClave" type="password" required={!usuario} placeholder="Repita la contraseña" />
-            </Field>
-            <Field label="Rol">
-              <Select name="rol" defaultValue={usuario?.rol ?? "EMPLEADO"}>
-                <option>ADMIN</option>
-                <option>EMPLEADO</option>
-              </Select>
             </Field>
             <CampoEstado estado={usuario?.estado} />
           </>
