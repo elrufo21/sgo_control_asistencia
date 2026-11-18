@@ -15,8 +15,8 @@ export function FeriadosPage() {
       listar={listarFeriados}
       eliminar={eliminarFeriado}
       columnas={[
-        ["nombre", "Nombre"],
         ["fecha", "Fecha"],
+        ["nombre", "Motivo"],
       ]}
       guardar={(id, datos) =>
         guardarFeriado(id, {
@@ -26,9 +26,6 @@ export function FeriadosPage() {
       }
       campos={(feriado) => (
         <>
-          <Field label="Nombre del feriado">
-            <TextInput name="nombre" defaultValue={feriado?.nombre} required />
-          </Field>
           <Field label="Fecha">
             <TextInput
               name="fecha"
@@ -36,6 +33,9 @@ export function FeriadosPage() {
               defaultValue={feriado?.fecha}
               required
             />
+          </Field>
+          <Field label="Motivo">
+            <TextInput name="nombre" defaultValue={feriado?.nombre} placeholder="Motivo del feriado" required />
           </Field>
         </>
       )}

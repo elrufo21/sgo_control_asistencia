@@ -41,6 +41,8 @@ export function TurnosPage() {
       }
       campos={(turno) => (
         <>
+          <TextInput type="hidden" name="toleranciaAntes" defaultValue={turno?.toleranciaAntes ?? 60} />
+          <TextInput type="hidden" name="toleranciaDespues" defaultValue={turno?.toleranciaDespues ?? 60} />
           <Field label="Nombre del turno">
             <TextInput name="nombre" defaultValue={turno?.nombre} required />
           </Field>
@@ -68,8 +70,6 @@ export function TurnosPage() {
           </Field>
           <Field label="Salida a refrigerio (turnos de 4 marcas)"><TextInput name="salidaRefrigerio" type="time" defaultValue={turno?.salidaRefrigerio ?? ""} /></Field>
           <Field label="Retorno de refrigerio (turnos de 4 marcas)"><TextInput name="retornoRefrigerio" type="time" defaultValue={turno?.retornoRefrigerio ?? ""} /></Field>
-          <Field label="Minutos antes de cada hora"><TextInput name="toleranciaAntes" type="number" min="0" max="720" step="1" required defaultValue={turno?.toleranciaAntes ?? 60} /></Field>
-          <Field label="Minutos después de cada hora"><TextInput name="toleranciaDespues" type="number" min="0" max="720" step="1" required defaultValue={turno?.toleranciaDespues ?? 60} /></Field>
           <Field label="Separación mínima entre marcas (min)"><TextInput name="minutosEntre" type="number" min="1" max="1440" step="1" required defaultValue={turno?.minutosEntre ?? 60} /></Field>
           <CampoEstado estado={turno?.estado} />
         </>

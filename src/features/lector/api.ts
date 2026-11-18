@@ -11,6 +11,7 @@ export type Jornada = {
   salida: string | null;
   nroMarcacion: number;
   marcacionesProgramadas?: number;
+  estado?: string;
 };
 
 export type PermisoLector = {
@@ -48,12 +49,12 @@ export function marcarConLector(signal: AbortSignal, modo: string) {
   });
 }
 
-export function consultarJornadasHoy(signal: AbortSignal) {
-  return consultar<Jornada[]>("lector/jornadas-hoy", { signal, cache: "no-store" });
+export function consultarJornadasHoy(signal: AbortSignal, esAdmin: boolean) {
+  return consultar<Jornada[]>(esAdmin ? "lector/jornadas-hoy" : "lector/publico/jornadas-hoy", { signal, cache: "no-store" });
 }
 
-export function consultarPermisosHoy(signal: AbortSignal) {
-  return consultar<PermisoLector[]>("lector/permisos-hoy", { signal, cache: "no-store" });
+export function consultarPermisosHoy(signal: AbortSignal, esAdmin: boolean) {
+  return consultar<PermisoLector[]>(esAdmin ? "lector/permisos-hoy" : "lector/publico/permisos-hoy", { signal, cache: "no-store" });
 }
 
 export function confirmarMarcacion(token: string, signal: AbortSignal) {

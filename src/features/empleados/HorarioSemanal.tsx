@@ -221,8 +221,6 @@ export default function HorarioSemanal({
                     </Select>
                   </Field>
                   {nuevo.marcaciones === "4" && <><Field label="Salida a refrigerio"><TextInput type="time" value={nuevo.salidaRefrigerio} onChange={(e) => setNuevo({ ...nuevo, salidaRefrigerio: e.target.value })} /></Field><Field label="Retorno de refrigerio"><TextInput type="time" value={nuevo.retornoRefrigerio} onChange={(e) => setNuevo({ ...nuevo, retornoRefrigerio: e.target.value })} /></Field></>}
-                  <Field label="Minutos antes"><TextInput type="number" min="0" max="720" value={nuevo.toleranciaAntes} onChange={(e) => setNuevo({ ...nuevo, toleranciaAntes: e.target.value })} /></Field>
-                  <Field label="Minutos después"><TextInput type="number" min="0" max="720" value={nuevo.toleranciaDespues} onChange={(e) => setNuevo({ ...nuevo, toleranciaDespues: e.target.value })} /></Field>
                   <Field label="Separación mínima (min)"><TextInput type="number" min="1" max="1440" value={nuevo.minutosEntre} onChange={(e) => setNuevo({ ...nuevo, minutosEntre: e.target.value })} /></Field>
                 </div>
                 <Button type="button" onClick={agregarTurno} disabled={busy}>

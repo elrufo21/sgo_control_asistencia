@@ -1,0 +1,10 @@
+.reporte .data-table-search-action { width: 100%; }
+.reporte-filtros { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.reporte-filtros .field { flex: 0 1 160px; }
+.reporte-filtros .field:first-child { flex-basis: 220px; }
+.reporte-general { display: flex; align-items: center; gap: 6px; min-height: 40px; color: #475569; font-size: 12px; white-space: nowrap; }
+.reporte-fechas { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
+.reporte-fechas .field { width: 160px; }
+.reporte-filtros .button { min-height: 40px; }
+.reporte-tardanza { color: #b45309; }
+.reporte-asistencia { color: #047857; }

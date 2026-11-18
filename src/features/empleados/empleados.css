@@ -206,6 +206,7 @@
   gap: 12px;
   margin-bottom: 14px;
 }
+.schedule-create-grid > .field:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .schedule-content > button {
   margin-bottom: 16px;
 }
@@ -378,7 +379,7 @@
   .empleado-form-layout .employee-media { grid-column: 1; grid-row: 2; margin: 0; }
 }
 @media (max-width: 500px) { .empleado-espacio { display: none; } .empleado-form-layout .employee-media { margin: 0; } }
-.empleado-consulta-dni { display: flex; gap: 8px; }
+.empleado-consulta-dni { display: flex; align-items: end; gap: 8px; }
 .empleado-consulta-dni input { flex: 1; min-width: 0; }
 .empleado-consulta-dni .button { flex: none; }
 

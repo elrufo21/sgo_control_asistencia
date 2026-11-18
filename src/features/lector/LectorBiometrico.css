@@ -481,9 +481,9 @@
   margin-top: 3px;
 }
 .lector-publico .lector-contenido {
-  max-width: 1300px;
+  max-width: 1500px;
   margin: auto;
-  padding: 0 32px;
+  padding: 28px 44px;
 }
 .lector-contenido {
   display: grid;

@@ -10,6 +10,7 @@ export type Usuario = {
   id: number;
   usuario: string;
   nombre: string;
+  area: string | null;
   personalId: number | null;
   rol: Rol;
   estado: Estado;

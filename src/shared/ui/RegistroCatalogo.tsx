@@ -1,5 +1,5 @@
 import { useCallback, useState, type FormEvent, type ReactNode } from "react";
-import { Pencil, Trash2, X, type LucideIcon } from "lucide-react";
+import { Pencil, Trash2, type LucideIcon } from "lucide-react";
 import { mensajeError } from "../api/http";
 import { useConsulta } from "../hooks/useConsulta";
 import { Listado, type Columna } from "./Listado";
@@ -68,7 +68,13 @@ export function RegistroCatalogo<Fila extends { id: number }>({
     if (
       !eliminar ||
       operacion ||
-      !(await confirmar({ titulo: `Eliminar ${singular}`, mensaje: "¿Deseas eliminar este registro? Esta acción no se puede deshacer.", confirmar: "Eliminar", peligro: true }))
+      !(await confirmar({
+        titulo: `Eliminar ${singular}`,
+        mensaje:
+          "¿Deseas eliminar este registro? Esta acción no se puede deshacer.",
+        confirmar: "Eliminar",
+        peligro: true,
+      }))
     )
       return;
     setOperacion(true);
@@ -104,7 +110,12 @@ export function RegistroCatalogo<Fila extends { id: number }>({
         columnas={columnas}
         cargando={cargando}
         accionCabecera={
-          <BotonNuevo type="button" nombre={singular} disabled={operacion} onClick={() => abrir()} />
+          <BotonNuevo
+            type="button"
+            nombre={singular}
+            disabled={operacion}
+            onClick={() => abrir()}
+          />
         }
         acciones={(fila) => (
           <>
@@ -149,17 +160,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
                 <h2 id="dialog-title">
                   {edicion.fila ? "Editar" : "Nuevo"} {singular}
                 </h2>
-                <p>Completa la información para continuar.</p>
               </div>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={cerrar}
-                disabled={operacion}
-                aria-label="Cerrar"
-              >
-                <X size={20} />
-              </button>
             </div>
             <form onSubmit={enviar}>
               <div className="form-grid">{campos(edicion.fila)}</div>

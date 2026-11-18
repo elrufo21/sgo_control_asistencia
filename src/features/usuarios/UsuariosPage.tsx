@@ -40,30 +40,26 @@ export function UsuariosPage() {
         resetPageOn={estado}
         eliminar={eliminarUsuario}
         columnas={[
+          ["nombre", "Personal"],
           ["usuario", "Usuario"],
-          ["nombre", "Empleado"],
-          ["rol", "Rol"],
+          ["area", "Área"],
           ["estado", "Estado"],
         ]}
-        guardar={(id, datos) =>
-          guardarUsuario(id, {
-            usuarioAlias: campo(datos, "usuarioAlias"),
-            clave: campo(datos, "clave"),
+        guardar={(id, datos) => {
+          const clave = campo(datos, "clave");
+          if (clave && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(clave)) throw new Error("La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula y un número.");
+          if (clave !== campo(datos, "confirmarClave")) throw new Error("Las contraseñas no coinciden.");
+          return guardarUsuario(id, {
+            usuarioAlias: campo(datos, "usuarioAlias").replace(/\s+/g, ""),
+            clave,
             personalId: idOpcional(datos, "personalId"),
             rol: campo(datos, "rol") === "ADMIN" ? "ADMIN" : "EMPLEADO",
             estado: estadoRegistro(datos),
-          })
-        }
+          });
+        }}
         campos={(usuario) => (
           <>
-            <Field label="Usuario">
-              <TextInput
-                name="usuarioAlias"
-                defaultValue={usuario?.usuario}
-                required
-              />
-            </Field>
-            <Field label="Empleado">
+            <Field label="Personal">
               <Select
                 name="personalId"
                 defaultValue={usuario?.personalId ?? ""}
@@ -76,6 +72,15 @@ export function UsuariosPage() {
                 ))}
               </Select>
             </Field>
+            <Field label="Usuario / Alias">
+              <TextInput name="usuarioAlias" defaultValue={usuario?.usuario} required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
+            </Field>
+            <Field label="Contraseña">
+              <TextInput name="clave" type="password" required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
+            </Field>
+            <Field label="Confirmar contraseña">
+              <TextInput name="confirmarClave" type="password" required={!usuario} placeholder="Repita la contraseña" />
+            </Field>
             <Field label="Rol">
               <Select name="rol" defaultValue={usuario?.rol ?? "EMPLEADO"}>
                 <option>ADMIN</option>
@@ -83,15 +88,6 @@ export function UsuariosPage() {
               </Select>
             </Field>
             <CampoEstado estado={usuario?.estado} />
-            <Field label="Contraseña">
-              <TextInput
-                name="clave"
-                type="password"
-                required={!usuario}
-                minLength={6}
-                placeholder={usuario ? "Dejar vacío para conservar" : ""}
-              />
-            </Field>
           </>
         )}
       />

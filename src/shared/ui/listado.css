@@ -89,7 +89,11 @@
 .data-table-filters { min-width: 0; }
 .data-table-filters .filters { align-items: end; flex-wrap: wrap; padding: 0; }
 .data-table-filters .field { flex: 0 1 160px; }
-.data-table-scroll { max-height: 65vh; }
+.data-table { display: flex; flex-direction: column; }
+.data-table-scroll { flex: 1 1 auto; min-height: 0; max-height: 65vh; }
+.main > main > .data-table > .data-table-scroll,
+.main > main > div:not([hidden]) > .data-table > .data-table-scroll { flex-basis: 0; max-height: none; }
+.data-table-toolbar, .data-table-footer { flex-shrink: 0; }
 .data-table th { position: sticky; top: 0; z-index: 1; }
 .data-table tbody tr:nth-child(even) { background: #f8fbfb; }
 .data-table-empty { padding: 40px 24px; text-align: center; color: #789299; }

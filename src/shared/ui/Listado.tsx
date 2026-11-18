@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import DataTable from "./DataTable";
+import { formatoFecha } from "../formatoFecha";
 
 export type Columna<Fila> = readonly [keyof Fila, string];
 
@@ -22,7 +23,7 @@ export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, fil
       id: String(clave), header: etiqueta, accessorFn: (fila) => fila[clave],
       cell: ({ getValue }) => {
         const valor = String(getValue() ?? "") || "—";
-        return clave === "estado" ? <span className={valor === "INACTIVO" ? "status inactive" : "status"}>{valor}</span> : valor;
+        return clave === "estado" ? <span className={valor === "INACTIVO" ? "status inactive" : "status"}>{valor}</span> : clave === "fecha" ? formatoFecha(valor) : valor;
       },
     }));
     if (acciones) cols.push({ id: "acciones", header: "Acciones", cell: ({ row }) => acciones(row.original) });

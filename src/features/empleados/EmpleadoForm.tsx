@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useId, useState, type FormEvent } from "react";
 import { ArrowLeft, Save, Search, Trash2 } from "lucide-react";
 import type { Area } from "../areas/api";
 import type { Turno } from "../turnos/api";
@@ -45,6 +45,8 @@ export function EmpleadoForm({
   alGuardar: () => void;
   protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
 }) {
+  const campoId = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const nombreCampo = (indice: number) => `registro_${campoId}_${indice}`;
   const [consultaDni, setConsultaDni] = useState("");
   const [consultandoDni, setConsultandoDni] = useState(false);
   const [nombres, setNombres] = useState(empleado?.nombres ?? "");
@@ -85,15 +87,15 @@ export function EmpleadoForm({
     setError("");
     try {
       await guardarEmpleado(empleado?.id, {
-        nombres: campo(datos, "nombres"),
-        apellidos: campo(datos, "apellidos"),
-        dni: campo(datos, "dni"),
+        nombres: campo(datos, nombreCampo(1)),
+        apellidos: campo(datos, nombreCampo(2)),
+        dni: campo(datos, nombreCampo(3)),
         nacimiento: campo(datos, "nacimiento"),
-        direccion: campo(datos, "direccion"),
+        direccion: campo(datos, nombreCampo(4)),
         areaId: idOpcional(datos, "areaId"),
         turnoId: idOpcional(datos, "turnoId"),
-        telefono: campo(datos, "telefono"),
-        email: campo(datos, "email"),
+        telefono: campo(datos, nombreCampo(5)),
+        email: campo(datos, nombreCampo(6)),
         estado: estadoRegistro(datos),
         eliminarFoto,
         fotoBase64: foto ? await leerFoto(foto) : undefined,
@@ -153,7 +155,7 @@ export function EmpleadoForm({
   return (
     <section className="panel empleado-formulario" aria-labelledby="empleado-form-title">
       <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
-      <form onSubmit={guardar} onChange={() => setEditado(true)}>
+      <form autoComplete="off" onSubmit={guardar} onChange={() => setEditado(true)}>
         <div className="empleado-form-head">
           <div className="empleado-form-titulo">
             <Button type="button" variant="secondary" disabled={guardando} onClick={cancelar} aria-label="Volver a empleados"><ArrowLeft size={16} /></Button>
@@ -167,15 +169,15 @@ export function EmpleadoForm({
         <div className="empleado-form-layout">
           <div className="form-grid empleado-datos">
             <Field label="Área"><Select name="areaId" required defaultValue={empleado?.areaId ?? ""}><option value="">Seleccione área</option>{areas.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
-            <div className="field"><span>Consultar DNI</span><div className="empleado-consulta-dni"><TextInput aria-label="DNI a consultar" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div></div>
-            <Field label="Nombres"><TextInput name="nombres" value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
-            <Field label="Apellidos"><TextInput name="apellidos" value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
-            <Field label="DNI"><TextInput name="dni" value={dni} onChange={(e) => setDni(e.currentTarget.value)} required maxLength={20} /></Field>
-            <Field label="Teléfono"><TextInput name="telefono" defaultValue={empleado?.telefono ?? ""} maxLength={40} /></Field>
+            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput autoComplete="one-time-code" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
+            <Field label="Nombres"><TextInput name={nombreCampo(1)} autoComplete="one-time-code" value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
+            <Field label="Apellidos"><TextInput name={nombreCampo(2)} autoComplete="one-time-code" value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
+            <Field label="DNI"><TextInput name={nombreCampo(3)} autoComplete="one-time-code" value={dni} onChange={(e) => setDni(e.currentTarget.value)} required maxLength={20} /></Field>
+            <Field label="Teléfono"><TextInput name={nombreCampo(5)} autoComplete="one-time-code" defaultValue={empleado?.telefono ?? ""} maxLength={40} /></Field>
             <Field label="Fecha de nacimiento"><TextInput name="nacimiento" type="date" value={nacimiento} onChange={(e) => setNacimiento(e.currentTarget.value)} /></Field>
             <Field label="Edad"><TextInput value={edad} readOnly disabled /></Field>
-            <Field label="Dirección"><TextInput name="direccion" defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
-            <Field label="Correo"><TextInput name="email" type="email" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
+            <Field label="Dirección"><TextInput name={nombreCampo(4)} autoComplete="one-time-code" defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
+            <Field label="Correo"><TextInput name={nombreCampo(6)} autoComplete="one-time-code" type="email" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
             <Field label={empleado ? "Fecha y hora de ingreso" : "Fecha de ingreso"}><TextInput value={ingreso} readOnly /></Field>
             <CampoEstado estado={empleado?.estado} />
             <Field label="Turno sugerido para horario"><Select name="turnoId" defaultValue={empleado?.turnoId ?? ""}><option value="">Sin asignar</option>{turnos.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>

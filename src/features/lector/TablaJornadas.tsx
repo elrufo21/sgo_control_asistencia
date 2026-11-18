@@ -40,7 +40,7 @@ export default function TablaJornadas({ jornada, identificado, jornadas, permiso
   const error = vista === "asistencia" ? errorJornadas : errorPermisos;
   return <div aria-label="Marcaciones de hoy">
     {error && <ErrorVista mensaje={error} />}
-    {vista === "asistencia" ? <DataTable key="asistencia" columns={columnas} data={esListado ? jornadas : jornada ? [jornada] : []} filterKeys={["fecha", "nombres"]} storageKey="lector-jornadas-hoy" showSearch={esListado} showPagination={esListado} persistSearch={false} loading={cargando} action={controles} emptyContent={error ? <div className="data-table-empty">No se pudieron cargar las jornadas.</div> : vacio} />
-      : <DataTable key="permisos" columns={columnasPermisos} data={permisos} filterKeys={["fecha", "nombres", "estado"]} storageKey="lector-permisos-hoy" showSearch={esListado} showPagination={esListado} persistSearch={false} loading={cargandoPermisos} action={controles} emptyContent={error ? <div className="data-table-empty">No se pudieron cargar los permisos.</div> : vacioPermisos} />}
+    {vista === "asistencia" ? <DataTable key="asistencia" columns={columnas} data={esListado ? jornadas : jornada ? [jornada] : []} filterKeys={["fecha", "nombres"]} storageKey="lector-jornadas-hoy" persistSearch={false} loading={cargando} action={controles} emptyContent={error ? <div className="data-table-empty">No se pudieron cargar las jornadas.</div> : vacio} />
+      : <DataTable key="permisos" columns={columnasPermisos} data={permisos} filterKeys={["fecha", "nombres", "estado"]} storageKey="lector-permisos-hoy" persistSearch={false} loading={cargandoPermisos} action={controles} emptyContent={error ? <div className="data-table-empty">No se pudieron cargar los permisos.</div> : vacioPermisos} />}
   </div>;
 }

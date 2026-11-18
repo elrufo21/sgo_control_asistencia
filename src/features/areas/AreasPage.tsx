@@ -14,7 +14,7 @@ export function AreasPage() {
       icono={Building2}
       listar={listarAreas}
       eliminar={eliminarArea}
-      columnas={[["nombre", "Nombre"]]}
+      columnas={[["nombre", "Área"]]}
       guardar={(id, datos) =>
         guardarArea(id, { nombre: campo(datos, "nombre") })
       }

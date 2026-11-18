@@ -1,13 +1,16 @@
-import { useState } from "react";
-import { CalendarDays, Pencil, Users } from "lucide-react";
+import { useCallback, useState } from "react";
+import { CalendarDays, Pencil, Trash2, Users } from "lucide-react";
+import { mensajeError } from "../../shared/api/http";
 import { useConsulta } from "../../shared/hooks/useConsulta";
+import { useConfirmacion } from "../../shared/ui/Confirmacion";
+import { ToastError } from "../../shared/ui/ToastError";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import { Listado, type Columna } from "../../shared/ui/Listado";
 import { BotonNuevo } from "../../shared/ui/Controls";
 import { FiltroEstado, type FiltroEstadoValor } from "../../shared/ui/FiltroEstado";
 import { listarAreas } from "../areas/api";
 import { listarTurnos } from "../turnos/api";
-import { listarEmpleados, type Empleado } from "./api";
+import { eliminarEmpleado, listarEmpleados, type Empleado } from "./api";
 import { EmpleadoForm } from "./EmpleadoForm";
 import HorarioSemanal from "./HorarioSemanal";
 import "./empleados.css";
@@ -17,7 +20,6 @@ const columnas: Columna<Empleado>[] = [
   ["apellidos", "Apellidos"],
   ["dni", "DNI"],
   ["area", "Área"],
-  ["estado", "Estado"],
 ];
 
 export function EmpleadosPage({
@@ -31,11 +33,30 @@ export function EmpleadosPage({
   const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   const [ficha, setFicha] = useState<{ empleado?: Empleado }>();
   const [horario, setHorario] = useState<Empleado>();
+  const [eliminando, setEliminando] = useState(false);
+  const [errorEliminacion, setErrorEliminacion] = useState("");
+  const cerrarToast = useCallback(() => setErrorEliminacion(""), []);
+  const confirmar = useConfirmacion();
   const opcionesCargando = areas.cargando || turnos.cargando;
   const opcionesDisponibles = !!areas.datos && !!turnos.datos;
 
+  async function quitar(empleado: Empleado) {
+    if (eliminando || !(await confirmar({ titulo: "Eliminar empleado", mensaje: `¿Deseas eliminar a ${empleado.nombres} ${empleado.apellidos}? Esta acción no se puede deshacer.`, confirmar: "Eliminar", peligro: true }))) return;
+    setEliminando(true);
+    setErrorEliminacion("");
+    try {
+      await eliminarEmpleado(empleado.id);
+      empleados.recargar();
+    } catch (error) {
+      setErrorEliminacion(mensajeError(error));
+    } finally {
+      setEliminando(false);
+    }
+  }
+
   return (
     <>
+      <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
       <ErrorVista mensaje={empleados.error || areas.error || turnos.error} />
       <div hidden={!!ficha}>
         <Listado
@@ -74,6 +95,16 @@ export function EmpleadosPage({
                 onClick={() => setFicha({ empleado })}
               >
                 <Pencil size={16} />
+              </button>
+              <button
+                type="button"
+                className="icon-button delete"
+                aria-label={`Eliminar ${empleado.nombres} ${empleado.apellidos}`}
+                title="Eliminar empleado"
+                disabled={eliminando}
+                onClick={() => void quitar(empleado)}
+              >
+                <Trash2 size={16} />
               </button>
             </>
           )}

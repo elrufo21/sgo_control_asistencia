@@ -2,6 +2,7 @@ import { consultar } from "../../shared/api/http";
 
 export type FilaReporte = {
   id: number;
+  personalId: number;
   fecha: string;
   empleado: string;
   turno: string | null;
@@ -12,6 +13,7 @@ export type FilaReporte = {
   retornoRefrigerio: string | null;
   salida: string | null;
   estado: string;
+  tardanzas: number;
 };
 export function consultarReporte(
   desde: string,

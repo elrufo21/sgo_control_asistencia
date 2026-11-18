@@ -53,20 +53,20 @@ export default function LectorBiometrico({ onBack, esAdmin = false }: { onBack?:
     return () => document.removeEventListener("visibilitychange", cambiar);
   }, []);
   useEffect(() => {
-    if (!esAdmin || !visible) return;
+    if (!visible) return;
     const timer = setInterval(() => setRevisionJornadas((revision) => revision + 1), 30000);
     return () => clearInterval(timer);
   }, [esAdmin, visible]);
   useEffect(() => {
-    if (!esAdmin || !visible) return;
+    if (!visible) return;
     const control = new AbortController();
     setCargandoJornadas(true);
-    consultarJornadasHoy(control.signal)
+    consultarJornadasHoy(control.signal, esAdmin)
       .then((filas) => { if (!control.signal.aborted) { setJornadas(filas); setErrorJornadas(""); } })
       .catch((error: unknown) => { if (!control.signal.aborted) setErrorJornadas(mensajeError(error)); })
       .finally(() => { if (!control.signal.aborted) setCargandoJornadas(false); });
     setCargandoPermisos(true);
-    consultarPermisosHoy(control.signal)
+    consultarPermisosHoy(control.signal, esAdmin)
       .then((filas) => { if (!control.signal.aborted) { setPermisos(filas); setErrorPermisos(""); } })
       .catch((error: unknown) => { if (!control.signal.aborted) setErrorPermisos(mensajeError(error)); })
       .finally(() => { if (!control.signal.aborted) setCargandoPermisos(false); });
@@ -99,7 +99,7 @@ export default function LectorBiometrico({ onBack, esAdmin = false }: { onBack?:
         if (!activo) return;
         setResultado(data);
         if (data.tokenConfirmacion) setPendiente(data.tokenConfirmacion);
-        if (data.registrada && esAdmin) setRevisionJornadas((revision) => revision + 1);
+        if (data.registrada) setRevisionJornadas((revision) => revision + 1);
         if (data.registrada && modo) setModo("PAUSA");
         setMensaje("");
         setLectorNoDisponible(false);
@@ -145,7 +145,7 @@ export default function LectorBiometrico({ onBack, esAdmin = false }: { onBack?:
     try {
       const marca = await confirmarMarcacion(pendiente, new AbortController().signal);
       setResultado((previo) => previo ? { ...previo, ...marca, tokenConfirmacion: null, mensaje: null } : previo);
-      if (esAdmin) setRevisionJornadas((revision) => revision + 1);
+      setRevisionJornadas((revision) => revision + 1);
       setMensaje("");
     } catch (error) { setMensaje(mensajeError(error)); }
     finally { setPendiente(null); setModo("PAUSA"); setConfirmando(false); }
@@ -264,12 +264,12 @@ export default function LectorBiometrico({ onBack, esAdmin = false }: { onBack?:
         <TablaJornadas
           jornada={resultado?.jornada}
           identificado={!!resultado}
-          jornadas={esAdmin ? jornadas : undefined}
-          permisos={esAdmin ? permisos : resultado?.permisos ?? []}
-          cargando={esAdmin && cargandoJornadas && jornadas.length === 0}
-          cargandoPermisos={esAdmin && cargandoPermisos && permisos.length === 0}
-          errorJornadas={esAdmin ? errorJornadas : ""}
-          errorPermisos={esAdmin ? errorPermisos : ""}
+          jornadas={jornadas}
+          permisos={permisos}
+          cargando={cargandoJornadas && jornadas.length === 0}
+          cargandoPermisos={cargandoPermisos && permisos.length === 0}
+          errorJornadas={errorJornadas}
+          errorPermisos={errorPermisos}
         />
       </div>
     </div>
