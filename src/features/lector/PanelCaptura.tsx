@@ -1,7 +1,8 @@
-import { CheckCircle2, Fingerprint, Info, ShieldCheck } from "lucide-react";
+import { Fingerprint, Info, ShieldCheck } from "lucide-react";
 
 import { Button } from "../../shared/ui/Controls";
 import type { ResultadoLector } from "./api";
+import { Toast } from "../../shared/ui/Toast";
 
 export default function PanelCaptura({
   estado,
@@ -12,6 +13,7 @@ export default function PanelCaptura({
   horaMarcacion,
   lectorNoDisponible,
   pausado,
+  onCerrarMensaje,
 }: {
   estado: string;
   modo: string;
@@ -21,6 +23,7 @@ export default function PanelCaptura({
   horaMarcacion: string;
   lectorNoDisponible: boolean;
   pausado: boolean;
+  onCerrarMensaje: () => void;
 }) {
   const noReconocida = mensaje.startsWith("Huella no reconocida.");
   return (
@@ -30,6 +33,9 @@ export default function PanelCaptura({
       }
       aria-labelledby="captura-titulo"
     >
+      {mensaje && <Toast key={mensaje} mensaje={mensaje} cerrar={onCerrarMensaje} />}
+      {!mensaje && resultado?.registrada && <Toast key={`${resultado.fechaHora}-${resultado.tipo}`} tipo="exito" mensaje={`${resultado.tipo} · ${horaMarcacion}${resultado.tipo === "ENTRADA" && resultado.jornada?.estado === "TARDE" ? " · TARDE" : ""}`} />}
+      {!mensaje && resultado && !resultado.registrada && !resultado.tokenConfirmacion && resultado.mensaje && <Toast key={resultado.mensaje} mensaje={resultado.mensaje} cerrar={onCerrarMensaje} />}
       <div
         className="lector-modos"
         role="group"
@@ -81,29 +87,15 @@ export default function PanelCaptura({
       </h2>
 
       <div className="lector-aviso" aria-live="polite">
-        {mensaje ? (
-          <div className="lector-error" role="alert">
-            {mensaje}
-          </div>
-        ) : resultado ? (
-          resultado.registrada ? (
-            <div className="lector-exito" role="status">
-              <CheckCircle2 size={17} /> {resultado.tipo} · {horaMarcacion}
-              {resultado.tipo === "ENTRADA" &&
-              resultado.jornada?.estado === "TARDE"
-                ? " · TARDE"
-                : ""}
-            </div>
-          ) : (
+        {!mensaje && resultado?.tokenConfirmacion ? (
             <div className="lector-informacion" role="status">
               <Info size={17} /> {resultado.mensaje}
             </div>
-          )
-        ) : (
+        ) : !mensaje && !resultado ? (
           <div className="lector-ayuda">
             <ShieldCheck size={16} /> La lectura se realiza automáticamente
           </div>
-        )}
+        ) : null}
       </div>
     </section>
   );

@@ -58,7 +58,7 @@ export function ReportePage() {
     <div className="reporte-fechas"><Field label="Fecha inicio"><TextInput type="date" value={desde} onChange={(e) => setDesde(e.currentTarget.value)} /></Field><Field label="Fecha fin"><TextInput type="date" value={hasta} onChange={(e) => setHasta(e.currentTarget.value)} /></Field></div>
   </div>;
   return <>
-    <ErrorVista mensaje={errorExportacion || empleados.error || reporte.error || (!rangoValido ? "Seleccione un rango válido de hasta 367 días." : "")} />
+    <ErrorVista mensaje={errorExportacion || empleados.error || reporte.error || (!rangoValido ? "Seleccione un rango válido de hasta 367 días." : "")} cerrar={() => setErrorExportacion("")} />
     <div className="reporte">
       <DataTable columns={columnas} data={filas} filterKeys={[]} storageKey="reporte-asistencia" showSearch={false} searchAction={filtros} loading={reporte.cargando} initialPageSize={50} resetPageOn={`${desde}|${hasta}|${personal}|${general}`} emptyMessage={!general && !personal ? "Selecciona un personal para consultar el reporte." : "No hay asistencias para los filtros seleccionados."} />
     </div>

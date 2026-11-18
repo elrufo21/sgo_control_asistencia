@@ -91,7 +91,7 @@ export function App() {
       navegar={navegar}
       salir={salir}
     >
-      <ErrorVista mensaje={error} />
+      <ErrorVista mensaje={error} cerrar={() => setError("")} />
       {vistas[paginaActual]}
     </AppLayout>
   );

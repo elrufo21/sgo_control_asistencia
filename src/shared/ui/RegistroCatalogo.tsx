@@ -100,7 +100,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   return (
     <>
       <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
-      <ErrorVista mensaje={error || (!edicion ? errorOperacion : "")} />
+      <ErrorVista mensaje={error || errorOperacion} cerrar={() => setErrorOperacion("")} />
       <Listado
         titulo={`Listado de ${titulo.toLowerCase()}`}
         icono={icono}
@@ -164,7 +164,6 @@ export function RegistroCatalogo<Fila extends { id: number }>({
             </div>
             <form onSubmit={enviar}>
               <div className="form-grid">{campos(edicion.fila)}</div>
-              <ErrorVista mensaje={errorOperacion} className="dialog-error" />
               <AccionesFormulario
                 guardando={operacion}
                 cancelar={cerrar}

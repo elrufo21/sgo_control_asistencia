@@ -5,6 +5,7 @@ import TextInput from "../../shared/ui/TextInput";
 import { consultarHorario, guardarHorario, type Empleado } from "./api";
 import { listarTurnos, guardarTurno, type Turno } from "../turnos/api";
 import { mensajeError } from "../../shared/api/http";
+import { ErrorVista } from "../../shared/ui/Pagina";
 
 const dias = [
   "Lunes",
@@ -311,11 +312,7 @@ export default function HorarioSemanal({
                 </div>
               </>
             )}
-            {error && (
-              <div className="error" role="alert">
-                {error}
-              </div>
-            )}
+            <ErrorVista mensaje={error} cerrar={() => setError("")} />
           </div>
           <div className="dialog-actions">
             <Button

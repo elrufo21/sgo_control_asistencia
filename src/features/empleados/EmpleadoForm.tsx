@@ -191,7 +191,7 @@ export function EmpleadoForm({
           </div>
           <FotoEmpleado empleado={empleado ?? {}} foto={foto} setFoto={(valor) => { setFoto(valor); setEditado(true); }} eliminar={eliminarFoto} setEliminar={setEliminarFoto} setError={setError} onHuellaRegistrada={alGuardar} />
         </div>
-        <ErrorVista mensaje={error} className="dialog-error" />
+        <ErrorVista mensaje={error} cerrar={() => setError("")} />
       </form>
     </section>
   );

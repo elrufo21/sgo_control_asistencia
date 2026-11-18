@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "./Controls";
+import { Toast } from "./Toast";
 
 export function Encabezado({
   titulo,
@@ -30,17 +31,12 @@ export function Encabezado({
 
 export function ErrorVista({
   mensaje,
-  className,
+  cerrar,
 }: {
   mensaje: string;
-  className?: string;
+  cerrar?: () => void;
 }) {
-  if (!mensaje) return null;
-  return (
-    <div className={className ? `error ${className}` : "error"} role="alert">
-      {mensaje}
-    </div>
-  );
+  return <Toast key={mensaje} mensaje={mensaje} cerrar={cerrar} />;
 }
 
 export function AccionesFormulario({

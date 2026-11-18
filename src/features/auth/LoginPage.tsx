@@ -5,6 +5,7 @@ import TextInput from "../../shared/ui/TextInput";
 import { campo } from "../../shared/ui/camposRegistro";
 import { mensajeError } from "../../shared/api/http";
 import { iniciarSesion, type Sesion } from "./api";
+import { ErrorVista } from "../../shared/ui/Pagina";
 import "./login.css";
 
 export function LoginPage({
@@ -53,11 +54,7 @@ export function LoginPage({
               required
             />
           </Field>
-          {error && (
-            <div className="error" role="alert">
-              {error}
-            </div>
-          )}
+          <ErrorVista mensaje={error} cerrar={() => setError("")} />
           <Button disabled={busy}>
             {busy ? "Ingresando..." : "Iniciar sesión"}
           </Button>

@@ -12,6 +12,7 @@ import {
 } from "../../shared/api/lectorLocal";
 import { ImagenHuellaVista } from "./ImagenHuellaVista";
 import { useConfirmacion } from "../../shared/ui/Confirmacion";
+import { Toast } from "../../shared/ui/Toast";
 
 export default function FotoEmpleado({
   empleado,
@@ -51,6 +52,7 @@ export default function FotoEmpleado({
     [huella, setHuella] = useState(Boolean(empleado.tieneHuella)),
     [mensaje, setMensaje] = useState("");
   const [imagenHuella, setImagenHuella] = useState<ImagenHuella | null>(null);
+  const [exitoHuella, setExitoHuella] = useState("");
   const [accesoLector, setAccesoLector] = useState(false);
   const [usuarioLector, setUsuarioLector] = useState("");
   const [claveLector, setClaveLector] = useState("");
@@ -160,6 +162,7 @@ export default function FotoEmpleado({
     setCapturando(true);
     setImagenHuella(null);
     setError("");
+    setExitoHuella("");
     setMensaje("Coloca el dedo en el lector.");
     try {
       let ultimaLectura = lecturas;
@@ -170,7 +173,8 @@ export default function FotoEmpleado({
         if (result.registrada) {
           setHuella(true);
           setLecturas(0);
-          setMensaje("Huella registrada correctamente.");
+          setMensaje("");
+          setExitoHuella("Huella registrada correctamente.");
           onHuellaRegistrada();
           break;
         }
@@ -188,7 +192,8 @@ export default function FotoEmpleado({
       }
     } catch (error) {
       if (!abort.signal.aborted) {
-        setMensaje(mensajeError(error));
+        setMensaje("");
+        setError(mensajeError(error));
         if (usaLectorLocal && error instanceof ApiError && error.status === 401)
           setAccesoLector(true);
       }
@@ -211,7 +216,7 @@ export default function FotoEmpleado({
       control.current = null;
       await capturar();
     } catch (error) {
-      if (!abort.signal.aborted) setMensaje(mensajeError(error));
+      if (!abort.signal.aborted) setError(mensajeError(error));
     } finally {
       if (!abort.signal.aborted) setAutenticando(false);
       if (control.current === abort) control.current = null;
@@ -219,6 +224,7 @@ export default function FotoEmpleado({
   }
   return (
     <div className="employee-media">
+      <Toast key={exitoHuella} tipo="exito" mensaje={exitoHuella} cerrar={() => setExitoHuella("")} />
       <FotoPersonal
         className="employee-photo"
         src={src}

@@ -221,6 +221,7 @@ export default function LectorBiometrico({ onBack, esAdmin = false }: { onBack?:
             resultado={resultado}
             horaMarcacion={horaMarcacion}
             lectorNoDisponible={lectorNoDisponible}
+            onCerrarMensaje={() => { setMensaje(""); setResultado((actual) => actual ? { ...actual, mensaje: null } : actual); }}
           />
           <section
             className="panel lector-identidad"

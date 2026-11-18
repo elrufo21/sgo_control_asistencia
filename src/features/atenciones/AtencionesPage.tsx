@@ -7,6 +7,7 @@ import { useConsulta } from "../../shared/hooks/useConsulta";
 import { Button, Field, Select } from "../../shared/ui/Controls";
 import { Listado, type Columna } from "../../shared/ui/Listado";
 import { ErrorVista } from "../../shared/ui/Pagina";
+import { Toast } from "../../shared/ui/Toast";
 import TextInput from "../../shared/ui/TextInput";
 import { listarEmpleados } from "../empleados/api";
 import "./atenciones.css";
@@ -58,7 +59,7 @@ export function AtencionesPage({ esAdmin }: { esAdmin: boolean }) {
 
   async function corregir(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault(); if (!seleccionada || ocupado) return;
-    setOcupado(true); setError("");
+    setOcupado(true); setError(""); setAviso("");
     try {
       await cambiar(`atenciones/${seleccionada.id}/corregir`, "PUT", { inicio, fin, motivo });
       setSeleccionada(null); setAviso("Corrección guardada."); listado.recargar();
@@ -67,8 +68,8 @@ export function AtencionesPage({ esAdmin }: { esAdmin: boolean }) {
 
   const filas: Fila[] = (listado.datos ?? []).filter((a) => !fecha || a.inicio.slice(0, 10) === fecha).map((a) => ({ ...a, inicioTexto: formatoFecha(a.inicio), finTexto: formatoFecha(a.fin), duracion: duracionTexto(a.duracionSegundos), estado: a.fin ? "Finalizada" : "En curso", identificacion: a.metodoInicio === "PRUEBA" || a.metodoFin === "PRUEBA" ? "Prueba" : "Huella" }));
   return <>
-    <ErrorVista mensaje={error || listado.error || empleados.error} />
-    {aviso && <p className="atencion-aviso" role="status">{aviso}</p>}
+    <ErrorVista mensaje={error || listado.error || empleados.error} cerrar={() => setError("")} />
+    <Toast key={aviso} tipo="exito" mensaje={aviso} cerrar={() => setAviso("")} />
     <section className="panel atencion-registro">
       <h2>Registrar atención</h2>
       <div className="atencion-modos" role="group" aria-label="Acción de atención">
