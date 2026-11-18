@@ -1,13 +1,18 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Activity,
+  ChevronDown,
   ChevronRight,
-  CircleHelp,
   LogOut,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   UserRound,
+  X,
 } from "lucide-react";
 import type { Sesion } from "../features/auth/api";
+import SearchInput from "../shared/ui/SearchInput";
+import { normalizeSearchText } from "../shared/ui/tableSearch";
 import { navegacion, paginasDe, type Pagina } from "./navegacion";
 import "./layout.css";
 
@@ -25,6 +30,11 @@ export function AppLayout({
   children: ReactNode;
 }) {
   const [menu, setMenu] = useState(false);
+  const [colapsado, setColapsado] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
+  const [menuUsuario, setMenuUsuario] = useState(false);
+  const usuarioRef = useRef<HTMLDivElement>(null);
+  const botonUsuarioRef = useRef<HTMLButtonElement>(null);
   const titulo = navegacion.find(({ id }) => id === pagina)?.titulo;
   useEffect(() => {
     if (!menu) return;
@@ -34,32 +44,59 @@ export function AppLayout({
     document.addEventListener("keydown", cerrar);
     return () => document.removeEventListener("keydown", cerrar);
   }, [menu]);
+  useEffect(() => {
+    if (!menuUsuario) return;
+    function cerrarFuera(evento: PointerEvent) {
+      if (!usuarioRef.current?.contains(evento.target as Node)) setMenuUsuario(false);
+    }
+    function cerrarEscape(evento: KeyboardEvent) {
+      if (evento.key === "Escape") {
+        setMenuUsuario(false);
+        botonUsuarioRef.current?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", cerrarFuera);
+    document.addEventListener("keydown", cerrarEscape);
+    return () => {
+      document.removeEventListener("pointerdown", cerrarFuera);
+      document.removeEventListener("keydown", cerrarEscape);
+    };
+  }, [menuUsuario]);
 
   return (
     <div className="app">
       <aside
         id="menu-principal"
         aria-label="Menú principal"
-        className={"sidebar " + (menu ? "open" : "")}
+        className={`sidebar ${menu ? "open" : ""} ${colapsado ? "collapsed" : ""}`}
       >
         <div className="brand">
           <div className="brand-icon">
             <Activity size={24} />
           </div>
-          <div>
+          <div className="brand-text">
             <strong>
               Asistencia<span>Salud</span>
             </strong>
             <small>CONTROL DE PERSONAL</small>
           </div>
+          <button type="button" className="sidebar-toggle" aria-label={colapsado ? "Expandir menú" : "Contraer menú"} aria-expanded={!colapsado} aria-controls="menu-principal" onClick={() => { setColapsado((valor) => !valor); setBusqueda(""); }}>
+            {colapsado ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
+          </button>
+          <button type="button" className="sidebar-close" aria-label="Cerrar menú" onClick={() => setMenu(false)}><X size={20} /></button>
+        </div>
+        <div className="sidebar-search">
+          <SearchInput aria-label="Buscar módulo" placeholder="Buscar módulo..." value={busqueda} onChange={(evento) => setBusqueda(evento.currentTarget.value)} onClear={() => setBusqueda("")} />
         </div>
         <div className="side-caption">MENÚ PRINCIPAL</div>
-        <nav>
-          {paginasDe(sesion.rol).map(({ id, titulo, icono: Icono }) => (
+        <nav aria-label="Módulos">
+          {paginasDe(sesion.rol).filter(({ titulo }) => normalizeSearchText(titulo).includes(normalizeSearchText(busqueda))).map(({ id, titulo, icono: Icono }) => (
             <button
               key={id}
               className={pagina === id ? "nav-item active" : "nav-item"}
               aria-current={pagina === id ? "page" : undefined}
+              aria-label={titulo}
+              title={titulo}
               onClick={() => {
                 navegar(id);
                 setMenu(false);
@@ -70,16 +107,8 @@ export function AppLayout({
               {pagina === id && <ChevronRight size={16} />}
             </button>
           ))}
+          {busqueda && !paginasDe(sesion.rol).some(({ titulo }) => normalizeSearchText(titulo).includes(normalizeSearchText(busqueda))) && <p className="sidebar-empty">No se encontraron módulos.</p>}
         </nav>
-        <div className="side-bottom">
-          <div className="help-icon">
-            <CircleHelp size={19} />
-          </div>
-          <div>
-            <strong>¿Necesitas ayuda?</strong>
-            <small>Contacta al administrador</small>
-          </div>
-        </div>
       </aside>
       {menu && (
         <button
@@ -89,7 +118,7 @@ export function AppLayout({
           onClick={() => setMenu(false)}
         />
       )}
-      <div className="main">
+      <div className={"main" + (colapsado ? " sidebar-collapsed" : "")}>
         <header className="topbar">
           <button
             type="button"
@@ -105,24 +134,28 @@ export function AppLayout({
             Gestión de personal <ChevronRight size={15} />{" "}
             <strong>{titulo}</strong>
           </div>
-          <div className="top-user">
-            <div className="avatar">
-              <UserRound size={19} />
-            </div>
-            <div>
-              <strong>{sesion.usuario}</strong>
-              <small>
-                {sesion.rol === "ADMIN" ? "Administrador" : "Empleado"}
-              </small>
-            </div>
+          <div className="top-user" ref={usuarioRef}>
             <button
-              className="icon-button"
-              onClick={salir}
-              aria-label="Cerrar sesión"
-              title="Cerrar sesión"
+              ref={botonUsuarioRef}
+              type="button"
+              className="top-user-trigger"
+              aria-label={`Menú de ${sesion.usuario}`}
+              aria-expanded={menuUsuario}
+              aria-controls="menu-usuario"
+              onClick={() => setMenuUsuario((abierto) => !abierto)}
             >
-              <LogOut size={18} />
+              <span className="avatar"><UserRound size={19} /></span>
+              <span className="top-user-info">
+                <strong>{sesion.usuario}</strong>
+                <small>{sesion.rol === "ADMIN" ? "Administrador" : "Empleado"}</small>
+              </span>
+              <ChevronDown size={16} aria-hidden="true" />
             </button>
+            {menuUsuario && <div id="menu-usuario" className="top-user-menu">
+              <button type="button" onClick={() => { setMenuUsuario(false); salir(); }}>
+                <LogOut size={16} aria-hidden="true" /> Cerrar sesión
+              </button>
+            </div>}
           </div>
         </header>
         <main>{children}</main>

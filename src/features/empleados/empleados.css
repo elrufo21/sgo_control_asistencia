@@ -363,7 +363,7 @@
 }
 
 /* Distribución de la ficha de personal basada en DNX. */
-.empleado-form-head { background: #0d9588; color: white; padding: 14px 20px; gap: 12px; flex-wrap: wrap; }
+.empleado-form-head { background: #c60000; color: white; padding: 14px 20px; gap: 12px; flex-wrap: wrap; }
 .empleado-form-titulo, .empleado-form-acciones { display: flex; align-items: center; gap: 10px; }
 .empleado-form-head h1 { margin: 0; color: white; font-size: 17px; }
 .empleado-form-head .button { padding: 9px 12px; }

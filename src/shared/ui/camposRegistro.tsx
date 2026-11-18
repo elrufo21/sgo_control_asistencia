@@ -1,4 +1,5 @@
-import { Field, Select } from "./Controls";
+import { Field } from "./Controls";
+import TextInput from "./TextInput";
 import type { Estado } from "../api/catalogo";
 
 export function campo(datos: FormData, nombre: string) {
@@ -18,10 +19,7 @@ export function estadoRegistro(datos: FormData): Estado {
 export function CampoEstado({ estado = "ACTIVO" }: { estado?: Estado }) {
   return (
     <Field label="Estado">
-      <Select name="estado" defaultValue={estado}>
-        <option>ACTIVO</option>
-        <option>INACTIVO</option>
-      </Select>
+      <TextInput name="estado" value={estado} readOnly />
     </Field>
   );
 }

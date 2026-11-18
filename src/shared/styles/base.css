@@ -109,6 +109,17 @@ p {
   border-color: #d9e5e7;
   box-shadow: none;
 }
+form .button:not(.secondary),
+.dialog .button:not(.secondary) {
+  background: #c60000;
+  border-color: #c60000;
+  box-shadow: 0 4px 10px #c600001a;
+}
+form .button:not(.secondary):hover,
+.dialog .button:not(.secondary):hover {
+  background: #a80000;
+  border-color: #a80000;
+}
 .empty-icon {
   display: grid;
   place-items: center;
