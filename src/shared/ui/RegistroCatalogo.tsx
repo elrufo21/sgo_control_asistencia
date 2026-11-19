@@ -21,6 +21,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   filtros,
   filtrar,
   resetPageOn,
+  volver,
 }: {
   titulo: string;
   singular: string;
@@ -34,6 +35,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   filtros?: ReactNode;
   filtrar?: (fila: Fila) => boolean;
   resetPageOn?: unknown;
+  volver: () => void;
 }) {
   const { datos, cargando, error, recargar } = useConsulta(listar);
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
@@ -106,6 +108,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
       <ErrorVista mensaje={error || errorOperacion} cerrar={() => setErrorOperacion("")} />
       <Listado
         mantenimiento
+        volver={volver}
         titulo={`Listado de ${titulo.toLowerCase()}`}
         icono={icono}
         filas={filtrar ? (datos ?? []).filter(filtrar) : (datos ?? [])}

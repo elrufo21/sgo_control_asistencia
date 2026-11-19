@@ -18,7 +18,7 @@ import { ErrorCampo } from "../../shared/ui/ValidacionFormulario";
 import { eliminarUsuario, guardarUsuario, listarUsuarios } from "./api";
 import "./usuarios.css";
 
-export function UsuariosPage() {
+export function UsuariosPage({ volver }: { volver: () => void }) {
   const empleados = useConsulta(listarEmpleados);
   const aliasId = `registro_${useId().replace(/[^a-zA-Z0-9]/g, "")}_1`;
   const claveId = `${aliasId}_2`;
@@ -36,6 +36,7 @@ export function UsuariosPage() {
     <>
       <ErrorVista mensaje={empleados.error} />
       <RegistroCatalogo
+        volver={volver}
         titulo="Usuarios"
         singular="usuario"
         descripcion="Administra los accesos al sistema."

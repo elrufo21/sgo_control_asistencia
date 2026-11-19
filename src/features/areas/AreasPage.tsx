@@ -5,9 +5,10 @@ import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import TextInput from "../../shared/ui/TextInput";
 import { eliminarArea, guardarArea, listarAreas } from "./api";
 
-export function AreasPage() {
+export function AreasPage({ volver }: { volver: () => void }) {
   return (
     <RegistroCatalogo
+      volver={volver}
       titulo="Áreas"
       singular="área"
       descripcion="Organiza los servicios y áreas del hospital."

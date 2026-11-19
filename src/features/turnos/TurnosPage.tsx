@@ -9,9 +9,10 @@ import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import TextInput from "../../shared/ui/TextInput";
 import { eliminarTurno, guardarTurno, listarTurnos } from "./api";
 
-export function TurnosPage() {
+export function TurnosPage({ volver }: { volver: () => void }) {
   return (
     <RegistroCatalogo
+      volver={volver}
       titulo="Turnos"
       singular="turno"
       descripcion="Define los horarios de trabajo del personal."

@@ -24,8 +24,10 @@ const columnas: Columna<Empleado>[] = [
 
 export function EmpleadosPage({
   protegerSalida,
+  volver,
 }: {
   protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
+  volver: () => void;
 }) {
   const empleados = useConsulta(listarEmpleados);
   const areas = useConsulta(listarAreas);
@@ -62,6 +64,7 @@ export function EmpleadosPage({
       <div hidden={!!ficha}>
         <Listado
           mantenimiento
+          volver={volver}
           titulo="Listado de empleados"
           icono={Users}
           columnas={columnas}

@@ -1,7 +1,8 @@
 // Adaptado de sgo_dnx_frontend/src/components/DataTable.tsx.
 import { useDeferredValue, useEffect, useMemo, useState, type ReactNode } from "react";
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable, type ColumnDef, type PaginationState } from "@tanstack/react-table";
-import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
+import { ArrowLeft, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
+import { Button } from "./Controls";
 import SearchInput from "./SearchInput";
 import { matchesSearch } from "./tableSearch";
 import "./listado.css";
@@ -14,7 +15,7 @@ function saveValue(storage: Storage, key: string, value: string) {
   try { if (value) storage.setItem(key, value); else storage.removeItem(key); } catch { /* Almacenamiento no disponible. */ }
 }
 
-export default function DataTable<T extends object>({ columns, data, filterKeys, storageKey, title, filters, action, searchAction, loading = false, emptyMessage = "No hay datos para mostrar.", emptyContent, showSearch = true, showPagination = true, persistSearch = true, resetPageOn, initialPageSize = 10, mantenimiento = false }: {
+export default function DataTable<T extends object>({ columns, data, filterKeys, storageKey, title, filters, action, searchAction, loading = false, emptyMessage = "No hay datos para mostrar.", emptyContent, showSearch = true, showPagination = true, persistSearch = true, resetPageOn, initialPageSize = 10, mantenimiento = false, volver }: {
   columns: ColumnDef<T, unknown>[];
   data: T[];
   filterKeys: readonly (keyof T & string)[];
@@ -32,6 +33,7 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   resetPageOn?: unknown;
   initialPageSize?: number;
   mantenimiento?: boolean;
+  volver?: () => void;
 }) {
   const searchKey = `asistencia:datatable:search:${storageKey}`;
   const sizeKey = `asistencia:datatable:pageSize:${storageKey}`;
@@ -56,6 +58,7 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
     {(title || showSearch || action || searchAction || filters) && <div className="data-table-toolbar">
       <div className="data-table-toolbar-row">
         <div className="data-table-primary">
+          {volver && <Button type="button" variant="secondary" className="data-table-back" onClick={volver} aria-label="Volver a mantenimiento" title="Volver a mantenimiento"><ArrowLeft size={20} aria-hidden="true" /></Button>}
           {showSearch && <SearchInput aria-label="Buscar registros" placeholder="Buscar en la tabla..." value={search} onChange={(e) => setSearch(e.currentTarget.value)} onClear={() => setSearch("")} />}
           {searchAction && <div className="data-table-search-action">{searchAction}</div>}
           {action && <div className="data-table-action">{action}</div>}

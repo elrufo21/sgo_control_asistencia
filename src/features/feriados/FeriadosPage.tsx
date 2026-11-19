@@ -5,9 +5,10 @@ import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import TextInput from "../../shared/ui/TextInput";
 import { eliminarFeriado, guardarFeriado, listarFeriados } from "./api";
 
-export function FeriadosPage() {
+export function FeriadosPage({ volver }: { volver: () => void }) {
   return (
     <RegistroCatalogo
+      volver={volver}
       titulo="Feriados"
       singular="feriado"
       descripcion="Mantén actualizado el calendario de días feriados."
