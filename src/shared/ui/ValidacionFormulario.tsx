@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Toast } from "./Toast";
+import { moverFoco } from "./navegacionFormulario";
 
 type Campo = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -49,18 +50,7 @@ export function ValidacionFormulario({ children }: { children: ReactNode }) {
       const flecha = evento.key === "ArrowDown" || evento.key === "ArrowUp";
       if (!enter && !flecha) return;
       if (flecha && (campo instanceof HTMLSelectElement || ["number", "date", "time", "month", "week", "datetime-local", "range"].includes(campo.type))) return;
-      const campos = Array.from(campo.form.elements).filter((elemento): elemento is Campo =>
-        (elemento instanceof HTMLInputElement || elemento instanceof HTMLSelectElement || elemento instanceof HTMLTextAreaElement) &&
-        !elemento.disabled && !("readOnly" in elemento && elemento.readOnly) && elemento.tabIndex >= 0 &&
-        !(elemento instanceof HTMLInputElement && ["hidden", "file", "checkbox", "radio", "submit", "button", "reset"].includes(elemento.type)) &&
-        elemento.getClientRects().length > 0,
-      );
-      const indice = campos.indexOf(campo);
-      const siguiente = campos[indice + (evento.key === "ArrowUp" ? -1 : 1)];
-      if (indice < 0 || !siguiente) return;
-      evento.preventDefault();
-      siguiente.focus({ preventScroll: true });
-      siguiente.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      if (moverFoco(campo, evento.key === "ArrowUp" ? -1 : 1, campo instanceof HTMLSelectElement)) evento.preventDefault();
     }
     document.addEventListener("keydown", navegar);
     return () => document.removeEventListener("keydown", navegar);

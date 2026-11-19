@@ -65,6 +65,7 @@ export function EmpleadosPage({
         <Listado
           mantenimiento
           volver={volver}
+          tituloPagina="Empleados"
           titulo="Listado de empleados"
           icono={Users}
           columnas={columnas}

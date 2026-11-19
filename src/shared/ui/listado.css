@@ -81,7 +81,11 @@
 .data-table-toolbar-row, .data-table-primary { display: flex; align-items: end; gap: 12px; min-width: 0; }
 .data-table-toolbar-row { justify-content: space-between; flex-wrap: wrap; }
 .data-table-primary { flex: 1; flex-wrap: wrap; }
-.data-table-primary .data-table-back { flex: none; width: 44px; min-width: 44px; height: 44px; padding: 0; justify-content: center; }
+.listado-mantenimiento-header { display: flex; align-items: center; gap: 12px; flex: none; margin-bottom: 16px; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; box-shadow: 0 1px 2px #0f172a0d; }
+.listado-mantenimiento-header .listado-mantenimiento-back { flex: none; width: 44px; min-width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 12px; }
+.listado-mantenimiento-header h1 { margin: 0; color: #0f2748; font-family: inherit; font-size: 36px; line-height: 1.1; font-weight: 600; letter-spacing: normal; }
+@media (max-width: 1023px) { .listado-mantenimiento-header h1 { font-size: 30px; } }
+@media (max-width: 639px) { .listado-mantenimiento-header h1 { font-size: 20px; } }
 .data-table-action { margin-left: auto; }
 .data-table-search { width: 280px; min-width: 0; max-width: 100%; }
 .data-table-primary:has(.data-table-search-action) .data-table-search { width: 455px; }

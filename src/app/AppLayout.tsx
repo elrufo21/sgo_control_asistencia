@@ -160,9 +160,8 @@ export function AppLayout({
           >
             <Menu size={22} />
           </button>
-          <div className="breadcrumb">
-            Gestión de personal <ChevronRight size={15} />{" "}
-            <strong>{titulo}</strong>
+          <div className={pagina === "mantenimiento" || mantenimiento.has(pagina) ? "breadcrumb breadcrumb-mantenimiento" : "breadcrumb"}>
+            {pagina === "mantenimiento" || mantenimiento.has(pagina) ? <strong>Mantenimiento</strong> : <>Gestión de personal <ChevronRight size={15} /> <strong>{titulo}</strong></>}
           </div>
           <div className="top-user" ref={usuarioRef}>
             <button

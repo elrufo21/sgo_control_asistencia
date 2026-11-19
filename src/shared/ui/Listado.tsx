@@ -1,12 +1,13 @@
 import { useMemo, type ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowLeft, type LucideIcon } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import DataTable from "./DataTable";
 import { formatoFecha } from "../formatoFecha";
+import { Button } from "./Controls";
 
 export type Columna<Fila> = readonly [keyof Fila, string];
 
-export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, filas, columnas, cargando, filtros, acciones, accionCabecera, resetPageOn, mantenimiento, volver }: {
+export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, filas, columnas, cargando, filtros, acciones, accionCabecera, resetPageOn, mantenimiento, volver, tituloPagina }: {
   titulo: string;
   icono: LucideIcon;
   filas: Fila[];
@@ -18,6 +19,7 @@ export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, fil
   resetPageOn?: unknown;
   mantenimiento?: boolean;
   volver?: () => void;
+  tituloPagina?: string;
 }) {
   const filterKeys = useMemo(() => columnas.map(([key]) => String(key) as keyof Fila & string), [columnas]);
   const defs = useMemo<ColumnDef<Fila, unknown>[]>(() => {
@@ -31,5 +33,11 @@ export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, fil
     if (acciones) cols.push({ id: "acciones", header: "Acciones", cell: ({ row }) => acciones(row.original) });
     return cols;
   }, [columnas, acciones]);
-  return <DataTable title={titulo} storageKey={titulo} columns={defs} data={filas} filterKeys={filterKeys} loading={cargando} filters={filtros} resetPageOn={resetPageOn} searchAction={accionCabecera} mantenimiento={mantenimiento} volver={volver} emptyContent={<div className="empty"><div className="empty-icon"><Icono size={27} /></div><strong>No hay registros para mostrar</strong><span>Prueba con otra búsqueda o modifica los filtros.</span></div>} />;
+  return <>
+    {volver && tituloPagina && <div className="listado-mantenimiento-header">
+      <Button type="button" variant="secondary" className="listado-mantenimiento-back" onClick={volver} aria-label="Volver a mantenimiento" title="Volver a mantenimiento"><ArrowLeft size={20} aria-hidden="true" /></Button>
+      <h1>{tituloPagina}</h1>
+    </div>}
+    <DataTable title={titulo} storageKey={titulo} columns={defs} data={filas} filterKeys={filterKeys} loading={cargando} filters={filtros} resetPageOn={resetPageOn} searchAction={accionCabecera} mantenimiento={mantenimiento} emptyContent={<div className="empty"><div className="empty-icon"><Icono size={27} /></div><strong>No hay registros para mostrar</strong><span>Prueba con otra búsqueda o modifica los filtros.</span></div>} />
+  </>;
 }

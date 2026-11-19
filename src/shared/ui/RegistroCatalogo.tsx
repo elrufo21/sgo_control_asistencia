@@ -109,6 +109,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
       <Listado
         mantenimiento
         volver={volver}
+        tituloPagina={titulo}
         titulo={`Listado de ${titulo.toLowerCase()}`}
         icono={icono}
         filas={filtrar ? (datos ?? []).filter(filtrar) : (datos ?? [])}
