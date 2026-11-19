@@ -35,7 +35,6 @@ export function AppLayout({
   const [menu, setMenu] = useState(false);
   const [colapsado, setColapsado] = useState(false);
   const [busqueda, setBusqueda] = useState("");
-  const [mantenimientoAbierto, setMantenimientoAbierto] = useState(() => mantenimiento.has(pagina));
   const [menuUsuario, setMenuUsuario] = useState(false);
   const usuarioRef = useRef<HTMLDivElement>(null);
   const botonUsuarioRef = useRef<HTMLButtonElement>(null);
@@ -45,7 +44,6 @@ export function AppLayout({
   const coincideGrupo = !!textoBusqueda && normalizeSearchText("Mantenimiento").includes(textoBusqueda);
   const paginasMantenimiento = paginas.filter(({ id, titulo }) => mantenimiento.has(id) && (coincideGrupo || normalizeSearchText(titulo).includes(textoBusqueda)));
   const paginasPrincipales = paginas.filter(({ id, titulo }) => !mantenimiento.has(id) && normalizeSearchText(titulo).includes(textoBusqueda));
-  const grupoExpandido = mantenimientoAbierto || !!textoBusqueda;
   function botonPagina({ id, titulo, icono: Icono }: (typeof navegacion)[number]) {
     return <button key={id} className={pagina === id ? "nav-item active" : "nav-item"} aria-current={pagina === id ? "page" : undefined} aria-label={titulo} title={titulo} onClick={() => { navegar(id); setMenu(false); }}>
       <Icono size={19} /><span>{titulo}</span>{pagina === id && <ChevronRight size={16} />}
@@ -133,12 +131,11 @@ export function AppLayout({
         </div>
         <nav aria-label="Módulos">
           {paginasPrincipales.filter(({ id }) => id === "lector" || id === "atenciones").map(botonPagina)}
-          {paginasMantenimiento.length > 0 && <>
-            <button type="button" className={pagina === "mantenimiento" || mantenimiento.has(pagina) ? "nav-item active" : "nav-item"} aria-label="Mantenimiento" title="Mantenimiento" aria-expanded={!colapsado && grupoExpandido} aria-controls="menu-mantenimiento" onClick={() => { setMantenimientoAbierto(colapsado || pagina !== "mantenimiento" ? true : !mantenimientoAbierto); setColapsado(false); navegar("mantenimiento"); setMenu(false); }}>
-              <Settings size={19} /><span>Mantenimiento</span><ChevronDown size={16} className={grupoExpandido ? "grupo-abierto" : ""} />
+          {paginasMantenimiento.length > 0 && (
+            <button type="button" className={pagina === "mantenimiento" || mantenimiento.has(pagina) ? "nav-item active" : "nav-item"} aria-current={pagina === "mantenimiento" ? "page" : undefined} aria-label="Mantenimiento" title="Mantenimiento" onClick={() => { navegar("mantenimiento"); setMenu(false); }}>
+              <Settings size={19} /><span>Mantenimiento</span>{pagina === "mantenimiento" && <ChevronRight size={16} />}
             </button>
-            {!colapsado && grupoExpandido && <div id="menu-mantenimiento" className="sidebar-submenu">{paginasMantenimiento.map(botonPagina)}</div>}
-          </>}
+          )}
           {paginasPrincipales.filter(({ id }) => id !== "lector" && id !== "atenciones").map(botonPagina)}
           {textoBusqueda && !paginasPrincipales.length && !paginasMantenimiento.length && <p className="sidebar-empty">No se encontraron módulos.</p>}
         </nav>
