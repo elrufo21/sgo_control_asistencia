@@ -6,7 +6,7 @@ import { formatoFecha } from "../formatoFecha";
 
 export type Columna<Fila> = readonly [keyof Fila, string];
 
-export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, filas, columnas, cargando, filtros, acciones, accionCabecera, resetPageOn }: {
+export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, filas, columnas, cargando, filtros, acciones, accionCabecera, resetPageOn, mantenimiento }: {
   titulo: string;
   icono: LucideIcon;
   filas: Fila[];
@@ -16,6 +16,7 @@ export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, fil
   acciones?: (fila: Fila) => ReactNode;
   accionCabecera?: ReactNode;
   resetPageOn?: unknown;
+  mantenimiento?: boolean;
 }) {
   const filterKeys = useMemo(() => columnas.map(([key]) => String(key) as keyof Fila & string), [columnas]);
   const defs = useMemo<ColumnDef<Fila, unknown>[]>(() => {
@@ -29,5 +30,5 @@ export function Listado<Fila extends { id: number }>({ titulo, icono: Icono, fil
     if (acciones) cols.push({ id: "acciones", header: "Acciones", cell: ({ row }) => acciones(row.original) });
     return cols;
   }, [columnas, acciones]);
-  return <DataTable title={titulo} storageKey={titulo} columns={defs} data={filas} filterKeys={filterKeys} loading={cargando} filters={filtros} resetPageOn={resetPageOn} searchAction={accionCabecera} emptyContent={<div className="empty"><div className="empty-icon"><Icono size={27} /></div><strong>No hay registros para mostrar</strong><span>Prueba con otra búsqueda o modifica los filtros.</span></div>} />;
+  return <DataTable title={titulo} storageKey={titulo} columns={defs} data={filas} filterKeys={filterKeys} loading={cargando} filters={filtros} resetPageOn={resetPageOn} searchAction={accionCabecera} mantenimiento={mantenimiento} emptyContent={<div className="empty"><div className="empty-icon"><Icono size={27} /></div><strong>No hay registros para mostrar</strong><span>Prueba con otra búsqueda o modifica los filtros.</span></div>} />;
 }

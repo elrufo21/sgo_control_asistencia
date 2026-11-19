@@ -95,6 +95,8 @@
 .main > main > div:not([hidden]) > .data-table > .data-table-scroll { flex-basis: 0; max-height: none; }
 .data-table-toolbar, .data-table-footer { flex-shrink: 0; }
 .data-table th { position: sticky; top: 0; z-index: 1; }
+.data-table-mantenimiento th { font-size: 12px; }
+.data-table-mantenimiento td, .data-table-mantenimiento .data-table-footer { font-size: 14px; }
 .data-table tbody tr:nth-child(even) { background: #f8fbfb; }
 .data-table-empty { padding: 40px 24px; text-align: center; color: #789299; }
 .data-table-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 24px; border-top: 1px solid #e2ebed; color: #607b83; font-size: 13px; }

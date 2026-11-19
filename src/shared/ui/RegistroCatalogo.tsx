@@ -102,6 +102,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
       <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
       <ErrorVista mensaje={error || errorOperacion} cerrar={() => setErrorOperacion("")} />
       <Listado
+        mantenimiento
         titulo={`Listado de ${titulo.toLowerCase()}`}
         icono={icono}
         filas={filtrar ? (datos ?? []).filter(filtrar) : (datos ?? [])}

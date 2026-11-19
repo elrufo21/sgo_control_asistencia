@@ -10,6 +10,7 @@ export default function TextInput({
   defaultValue,
   onChange,
   onCompositionEnd,
+  autoComplete: _autoComplete,
   ...props
 }: ComponentPropsWithoutRef<"input">) {
   const uppercase =
@@ -56,6 +57,14 @@ export default function TextInput({
     <input
       {...props}
       type={type}
+      autoComplete={type === "password" ? "one-time-code" : "off"}
+      autoCorrect="off"
+      autoCapitalize="off"
+      spellCheck={false}
+      data-lpignore="true"
+      data-1p-ignore="true"
+      data-bwignore="true"
+      data-form-type="other"
       value={format(value)}
       defaultValue={format(defaultValue)}
       onChange={handleChange}

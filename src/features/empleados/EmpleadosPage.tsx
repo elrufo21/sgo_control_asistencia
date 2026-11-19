@@ -61,6 +61,7 @@ export function EmpleadosPage({
       <ErrorVista mensaje={empleados.error || areas.error || turnos.error} />
       <div hidden={!!ficha}>
         <Listado
+          mantenimiento
           titulo="Listado de empleados"
           icono={Users}
           columnas={columnas}

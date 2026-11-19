@@ -14,7 +14,7 @@ function saveValue(storage: Storage, key: string, value: string) {
   try { if (value) storage.setItem(key, value); else storage.removeItem(key); } catch { /* Almacenamiento no disponible. */ }
 }
 
-export default function DataTable<T extends object>({ columns, data, filterKeys, storageKey, title, filters, action, searchAction, loading = false, emptyMessage = "No hay datos para mostrar.", emptyContent, showSearch = true, showPagination = true, persistSearch = true, resetPageOn, initialPageSize = 10 }: {
+export default function DataTable<T extends object>({ columns, data, filterKeys, storageKey, title, filters, action, searchAction, loading = false, emptyMessage = "No hay datos para mostrar.", emptyContent, showSearch = true, showPagination = true, persistSearch = true, resetPageOn, initialPageSize = 10, mantenimiento = false }: {
   columns: ColumnDef<T, unknown>[];
   data: T[];
   filterKeys: readonly (keyof T & string)[];
@@ -31,6 +31,7 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   persistSearch?: boolean;
   resetPageOn?: unknown;
   initialPageSize?: number;
+  mantenimiento?: boolean;
 }) {
   const searchKey = `asistencia:datatable:search:${storageKey}`;
   const sizeKey = `asistencia:datatable:pageSize:${storageKey}`;
@@ -51,7 +52,7 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   const start = filtered.length ? pagination.pageIndex * pagination.pageSize + 1 : 0;
   const end = Math.min(start + visibleRows.length - (start ? 1 : 0), filtered.length);
 
-  return <section className="panel data-table">
+  return <section className={`panel data-table${mantenimiento ? " data-table-mantenimiento" : ""}`}>
     {(title || showSearch || action || searchAction || filters) && <div className="data-table-toolbar">
       <div className="data-table-toolbar-row">
         <div className="data-table-primary">

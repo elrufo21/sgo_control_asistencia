@@ -310,7 +310,6 @@ export default function FotoEmpleado({
                 <TextInput
                   value={usuarioLector}
                   onChange={(e) => setUsuarioLector(e.currentTarget.value)}
-                  autoComplete="username"
                 />
               </Field>
               <Field label="Contraseña">
@@ -318,7 +317,6 @@ export default function FotoEmpleado({
                   type="password"
                   value={claveLector}
                   onChange={(e) => setClaveLector(e.currentTarget.value)}
-                  autoComplete="current-password"
                 />
               </Field>
               <Button

@@ -20,6 +20,8 @@ import "./usuarios.css";
 export function UsuariosPage() {
   const empleados = useConsulta(listarEmpleados);
   const aliasId = `registro_${useId().replace(/[^a-zA-Z0-9]/g, "")}_1`;
+  const claveId = `${aliasId}_2`;
+  const confirmarClaveId = `${aliasId}_3`;
   const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   if (!empleados.datos) {
     return (
@@ -49,9 +51,9 @@ export function UsuariosPage() {
           ["estado", "Estado"],
         ]}
         guardar={(id, datos) => {
-          const clave = campo(datos, "clave");
+          const clave = campo(datos, claveId);
           if (clave && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(clave)) throw new Error("La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula y un número.");
-          if (clave !== campo(datos, "confirmarClave")) throw new Error("Las contraseñas no coinciden.");
+          if (clave !== campo(datos, confirmarClaveId)) throw new Error("Las contraseñas no coinciden.");
           return guardarUsuario(id, {
             usuarioAlias: campo(datos, aliasId).replace(/\s+/g, ""),
             clave,
@@ -81,10 +83,10 @@ export function UsuariosPage() {
               <TextInput name={aliasId} autoComplete="one-time-code" autoCorrect="off" spellCheck={false} data-lpignore="true" data-1p-ignore="true" defaultValue={usuario?.usuario} required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
             </Field>
             <Field label="Contraseña">
-              <PasswordInput name="clave" autoComplete="new-password" required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
+              <PasswordInput name={claveId} required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
             </Field>
             <Field label="Confirmar contraseña">
-              <PasswordInput name="confirmarClave" autoComplete="new-password" required={!usuario} placeholder="Repita la contraseña" />
+              <PasswordInput name={confirmarClaveId} required={!usuario} placeholder="Repita la contraseña" />
             </Field>
             <CampoEstado estado={usuario?.estado} />
           </div>

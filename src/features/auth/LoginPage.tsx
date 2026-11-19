@@ -42,15 +42,14 @@ export function LoginPage({
           Asistencia<span>Salud</span>
         </h1>
         <p>Ingresa para continuar al control de asistencia.</p>
-        <form onSubmit={submit}>
+        <form autoComplete="off" onSubmit={submit}>
           <Field label="Usuario">
-            <TextInput name="usuario" autoComplete="username" required />
+            <TextInput name="usuario" required />
           </Field>
           <Field label="Contraseña">
             <TextInput
               name="clave"
               type="password"
-              autoComplete="current-password"
               required
             />
           </Field>
