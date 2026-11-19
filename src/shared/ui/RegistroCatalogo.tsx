@@ -162,7 +162,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
                 </h2>
               </div>
             </div>
-            <form onSubmit={enviar}>
+            <form autoComplete="off" onSubmit={enviar}>
               <div className="form-grid">{campos(edicion.fila)}</div>
               <AccionesFormulario
                 guardando={operacion}

@@ -1,0 +1,6 @@
+.form-grid > .usuario-campos {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 17px;
+  min-width: 0;
+}

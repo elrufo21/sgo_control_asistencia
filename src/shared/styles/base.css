@@ -299,13 +299,15 @@ td {
 }
 .field:has(> input:not([type="file"])),
 .field:has(> select),
-.field:has(> textarea) {
+.field:has(> textarea),
+.field:has(> .password-input) {
   position: relative;
   padding-top: 7px;
 }
 .field:has(> input:not([type="file"])) > span,
 .field:has(> select) > span,
-.field:has(> textarea) > span {
+.field:has(> textarea) > span:first-child,
+.field:has(> .password-input) > span:first-child {
   position: absolute;
   z-index: 1;
   top: 0;
@@ -342,6 +344,10 @@ td {
 }
 .field:focus-within > span { color: #3b82f6; }
 .field input:disabled, .field select:disabled { background: #f8fafc; color: #64748b; }
+.password-input { position: relative; display: block; width: 100%; }
+.password-input input { padding-right: 42px; }
+.password-input button { position: absolute; top: 0; right: 0; height: 100%; width: 40px; display: grid; place-items: center; border: 0; background: transparent; color: #64748b; border-radius: 6px; }
+.password-input button:focus-visible { outline: 2px solid #3b82f6; outline-offset: -3px; }
 .dialog-actions {
   display: flex;
   justify-content: flex-end;

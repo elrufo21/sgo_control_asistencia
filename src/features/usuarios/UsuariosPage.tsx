@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { FiltroEstado, type FiltroEstadoValor } from "../../shared/ui/FiltroEstado";
 import { UserRound } from "lucide-react";
 import { listarEmpleados } from "../empleados/api";
@@ -13,10 +13,13 @@ import {
 import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import TextInput from "../../shared/ui/TextInput";
+import PasswordInput from "../../shared/ui/PasswordInput";
 import { eliminarUsuario, guardarUsuario, listarUsuarios } from "./api";
+import "./usuarios.css";
 
 export function UsuariosPage() {
   const empleados = useConsulta(listarEmpleados);
+  const aliasId = `registro_${useId().replace(/[^a-zA-Z0-9]/g, "")}_1`;
   const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   if (!empleados.datos) {
     return (
@@ -50,7 +53,7 @@ export function UsuariosPage() {
           if (clave && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(clave)) throw new Error("La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula y un número.");
           if (clave !== campo(datos, "confirmarClave")) throw new Error("Las contraseñas no coinciden.");
           return guardarUsuario(id, {
-            usuarioAlias: campo(datos, "usuarioAlias").replace(/\s+/g, ""),
+            usuarioAlias: campo(datos, aliasId).replace(/\s+/g, ""),
             clave,
             personalId: idOpcional(datos, "personalId"),
             rol: campo(datos, "rol") === "ADMIN" ? "ADMIN" : "EMPLEADO",
@@ -58,7 +61,7 @@ export function UsuariosPage() {
           });
         }}
         campos={(usuario) => (
-          <>
+          <div className="usuario-campos">
             <TextInput type="hidden" name="rol" value={usuario?.rol ?? "EMPLEADO"} readOnly />
             <Field label="Personal">
               <Select
@@ -75,16 +78,16 @@ export function UsuariosPage() {
               </Select>
             </Field>
             <Field label="Usuario / Alias">
-              <TextInput name="usuarioAlias" defaultValue={usuario?.usuario} required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
+              <TextInput name={aliasId} autoComplete="one-time-code" autoCorrect="off" spellCheck={false} data-lpignore="true" data-1p-ignore="true" defaultValue={usuario?.usuario} required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
             </Field>
             <Field label="Contraseña">
-              <TextInput name="clave" type="password" required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
+              <PasswordInput name="clave" autoComplete="new-password" required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
             </Field>
             <Field label="Confirmar contraseña">
-              <TextInput name="confirmarClave" type="password" required={!usuario} placeholder="Repita la contraseña" />
+              <PasswordInput name="confirmarClave" autoComplete="new-password" required={!usuario} placeholder="Repita la contraseña" />
             </Field>
             <CampoEstado estado={usuario?.estado} />
-          </>
+          </div>
         )}
       />
     </>
