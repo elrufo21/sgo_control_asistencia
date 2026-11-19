@@ -1,7 +1,8 @@
-import type {
-  ChangeEvent,
-  ComponentPropsWithoutRef,
-  CompositionEvent,
+import {
+  useId,
+  type ChangeEvent,
+  type ComponentPropsWithoutRef,
+  type CompositionEvent,
 } from "react";
 
 export default function TextInput({
@@ -13,6 +14,7 @@ export default function TextInput({
   autoComplete: _autoComplete,
   ...props
 }: ComponentPropsWithoutRef<"input">) {
+  const autocompleteId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const uppercase =
     type !== "password" &&
     ["text", "search", "email", "tel", "url"].includes(type);
@@ -53,11 +55,12 @@ export default function TextInput({
     onCompositionEnd?.(event);
   }
 
+  // Chromium puede ignorar "off" para campos que identifica como direcciones.
   return (
     <input
       {...props}
       type={type}
-      autoComplete={type === "password" ? "one-time-code" : "off"}
+      autoComplete={type === "password" ? "one-time-code" : ["text", "search", "email", "tel", "url"].includes(type) ? `no-autofill-${autocompleteId}` : "off"}
       autoCorrect="off"
       autoCapitalize="off"
       spellCheck={false}
