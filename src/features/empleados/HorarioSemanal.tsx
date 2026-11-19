@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import { Button, Field, Select } from "../../shared/ui/Controls";
 import TextInput from "../../shared/ui/TextInput";
@@ -6,6 +6,7 @@ import { consultarHorario, guardarHorario, type Empleado } from "./api";
 import { listarTurnos, guardarTurno, type Turno } from "../turnos/api";
 import { mensajeError } from "../../shared/api/http";
 import { ErrorVista } from "../../shared/ui/Pagina";
+import { enfocarCampo } from "../../shared/ui/ValidacionFormulario";
 
 const dias = [
   "Lunes",
@@ -26,6 +27,7 @@ export default function HorarioSemanal({
   turnos: Turno[];
   onClose: () => void;
 }) {
+  const formularioRef = useRef<HTMLFormElement>(null);
   const [horario, setHorario] = useState<string[] | null>(null),
     [turnoRapido, setTurnoRapido] = useState(""),
     [error, setError] = useState(""),
@@ -78,6 +80,8 @@ export default function HorarioSemanal({
       nuevo.entrada === nuevo.salida
     ) {
       setError("Ingresa un nombre y horas de entrada y salida diferentes.");
+      const campo = !nuevo.nombre.trim() ? "nombreTurno" : !nuevo.entrada ? "entradaTurno" : "salidaTurno";
+      enfocarCampo(formularioRef.current?.elements.namedItem(campo) as Element | null);
       return;
     }
     setBusy(true);
@@ -160,7 +164,7 @@ export default function HorarioSemanal({
             <X size={20} />
           </button>
         </div>
-        <form onSubmit={guardar}>
+        <form ref={formularioRef} onSubmit={guardar}>
           <div className="schedule-content">
             <Button
               type="button"
@@ -174,16 +178,12 @@ export default function HorarioSemanal({
               {crearTurno ? "Cerrar nuevo turno" : "+ Crear turno"}
             </Button>
             {crearTurno && (
-              <div
-                className="schedule-create"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") e.preventDefault();
-                }}
-              >
+              <div className="schedule-create">
                 <strong>Nuevo turno</strong>
                 <div className="schedule-create-grid">
                   <Field label="Nombre">
                     <TextInput
+                      name="nombreTurno"
                       value={nuevo.nombre}
                       maxLength={100}
                       onChange={(e) =>
@@ -194,6 +194,7 @@ export default function HorarioSemanal({
                   </Field>
                   <Field label="Entrada">
                     <TextInput
+                      name="entradaTurno"
                       type="time"
                       value={nuevo.entrada}
                       onChange={(e) =>
@@ -203,6 +204,7 @@ export default function HorarioSemanal({
                   </Field>
                   <Field label="Salida">
                     <TextInput
+                      name="salidaTurno"
                       type="time"
                       value={nuevo.salida}
                       onChange={(e) =>

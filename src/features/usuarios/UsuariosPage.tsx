@@ -14,6 +14,7 @@ import { RegistroCatalogo } from "../../shared/ui/RegistroCatalogo";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import TextInput from "../../shared/ui/TextInput";
 import PasswordInput from "../../shared/ui/PasswordInput";
+import { ErrorCampo } from "../../shared/ui/ValidacionFormulario";
 import { eliminarUsuario, guardarUsuario, listarUsuarios } from "./api";
 import "./usuarios.css";
 
@@ -52,8 +53,8 @@ export function UsuariosPage() {
         ]}
         guardar={(id, datos) => {
           const clave = campo(datos, claveId);
-          if (clave && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(clave)) throw new Error("La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula y un número.");
-          if (clave !== campo(datos, confirmarClaveId)) throw new Error("Las contraseñas no coinciden.");
+          if (clave && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(clave)) throw new ErrorCampo("La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula y un número.", claveId);
+          if (clave !== campo(datos, confirmarClaveId)) throw new ErrorCampo("Las contraseñas no coinciden.", confirmarClaveId);
           return guardarUsuario(id, {
             usuarioAlias: campo(datos, aliasId).replace(/\s+/g, ""),
             clave,

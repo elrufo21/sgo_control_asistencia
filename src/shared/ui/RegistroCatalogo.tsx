@@ -7,6 +7,7 @@ import { AccionesFormulario, ErrorVista } from "./Pagina";
 import { BotonNuevo } from "./Controls";
 import { useConfirmacion } from "./Confirmacion";
 import { ToastError } from "./ToastError";
+import { enfocarCampo, ErrorCampo } from "./ValidacionFormulario";
 
 export function RegistroCatalogo<Fila extends { id: number }>({
   titulo,
@@ -51,6 +52,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     if (!edicion || operacion) return;
+    const formulario = evento.currentTarget;
     setOperacion(true);
     setErrorOperacion("");
     try {
@@ -59,6 +61,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
       recargar();
     } catch (error) {
       setErrorOperacion(mensajeError(error));
+      if (error instanceof ErrorCampo) enfocarCampo(formulario.elements.namedItem(error.campo) as Element | null);
     } finally {
       setOperacion(false);
     }

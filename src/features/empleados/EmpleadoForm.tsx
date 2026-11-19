@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, Plus, Save, Search, Trash2 } from "lucide-react";
 import type { Area } from "../areas/api";
 import type { Turno } from "../turnos/api";
@@ -17,6 +17,7 @@ import { eliminarEmpleado, guardarEmpleado, type Empleado } from "./api";
 import { useConfirmacion } from "../../shared/ui/Confirmacion";
 import { ToastError } from "../../shared/ui/ToastError";
 import { formatoFecha } from "../../shared/formatoFecha";
+import { enfocarCampo } from "../../shared/ui/ValidacionFormulario";
 
 function leerFoto(archivo: File) {
   return new Promise<string>((resolve, reject) => {
@@ -48,6 +49,7 @@ export function EmpleadoForm({
   protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
 }) {
   const campoId = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const formularioRef = useRef<HTMLFormElement>(null);
   const nombreCampo = (indice: number) => `registro_${campoId}_${indice}`;
   const [consultaDni, setConsultaDni] = useState("");
   const [consultandoDni, setConsultandoDni] = useState(false);
@@ -116,7 +118,7 @@ export function EmpleadoForm({
   }
 
   async function buscarDni() {
-    if (!/^\d{8}$/.test(consultaDni)) { setError("Ingresa los 8 dígitos del DNI."); return; }
+    if (!/^\d{8}$/.test(consultaDni)) { setError("Ingresa los 8 dígitos del DNI."); enfocarCampo(formularioRef.current?.elements.namedItem("consultaDni") as Element | null); return; }
     setConsultandoDni(true); setError("");
     try {
       const resultado = await consultar<{ dni: string; nombres: string; apellidos: string }>(`empleados/consulta-dni/${consultaDni}`);
@@ -161,7 +163,7 @@ export function EmpleadoForm({
   return (
     <section className="panel empleado-formulario" aria-labelledby="empleado-form-title">
       <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
-      <form autoComplete="off" onSubmit={guardar} onChange={() => setEditado(true)}>
+      <form ref={formularioRef} autoComplete="off" onSubmit={guardar} onChange={() => setEditado(true)}>
         <div className="empleado-form-head">
           <div className="empleado-form-titulo">
             <Button type="button" variant="secondary" disabled={guardando} onClick={cancelar} aria-label="Volver a empleados"><ArrowLeft size={16} /></Button>
@@ -176,7 +178,7 @@ export function EmpleadoForm({
         <div className="empleado-form-layout">
           <div className="form-grid empleado-datos">
             <Field label="Área"><Select name="areaId" required defaultValue={empleado?.areaId ?? ""}><option value="">Seleccione área</option>{areas.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
-            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput autoComplete="one-time-code" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
+            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput name="consultaDni" autoComplete="one-time-code" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
             <Field label="Nombres"><TextInput name={nombreCampo(1)} autoComplete="one-time-code" value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="Apellidos"><TextInput name={nombreCampo(2)} autoComplete="one-time-code" value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="DNI"><TextInput name={nombreCampo(3)} autoComplete="one-time-code" value={dni} inputMode="numeric" pattern="[0-9]{8}" title="El DNI debe tener 8 dígitos" onChange={(e) => setDni(e.currentTarget.value.replace(/\D/g, ""))} required maxLength={8} /></Field>

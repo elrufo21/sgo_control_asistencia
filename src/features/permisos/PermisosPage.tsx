@@ -7,6 +7,7 @@ import { ErrorVista } from "../../shared/ui/Pagina";
 import TextInput from "../../shared/ui/TextInput";
 import { Listado, type Columna } from "../../shared/ui/Listado";
 import { formatoFecha } from "../../shared/formatoFecha";
+import { enfocarCampo } from "../../shared/ui/ValidacionFormulario";
 
 type Permiso = { id: number; personalId: number; empleado: string; fecha: string; estado: string; salida: string | null; retorno: string | null };
 type PermisoFila = Permiso & { fechaMostrada: string; salidaMostrada: string; retornoMostrado: string };
@@ -40,11 +41,11 @@ export function PermisosPage() {
   function abrirAsignacion(fila: Resumen) {
     setAsignacion(fila); setHoras(fila.limite === null ? "" : String(Math.floor(fila.limite / 60))); setMinutosExtra(String((fila.limite ?? 0) % 60)); setError("");
   }
-  function guardarAsignacion(e: FormEvent) {
+  function guardarAsignacion(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!asignacion) return;
     const total = Number(horas) * 60 + Number(minutosExtra);
-    if (!Number.isInteger(total) || total < 0 || total > 44640) { setError("Indique una cantidad válida de horas y minutos."); return; }
+    if (!Number.isInteger(total) || total < 0 || total > 44640) { setError("Indique una cantidad válida de horas y minutos."); enfocarCampo(e.currentTarget.querySelector('input[type="number"]')); return; }
     void ejecutar(async () => { await cambiar(`permisos/asignaciones/${asignacion.id}`, "PUT", { mes, minutos: total }); setAsignacion(null); });
   }
   const resumen: ResumenFila[] = (permisos.datos?.resumen ?? []).map((p) => ({ ...p, asignado: p.limite === null ? "Sin asignar" : minutos(p.limite), consumo: minutos(p.usado), saldo: p.limite === null ? "Sin asignar" : minutos(Math.max(0, p.limite - p.usado)), exceso: p.limite === null ? "Sin asignar" : minutos(Math.max(0, p.usado - p.limite)) }));
