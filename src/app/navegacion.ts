@@ -21,6 +21,6 @@ export const navegacion = [
   { id: "reporte", titulo: "Reporte de asistencia", icono: ClipboardList },
 ] as const;
 
-export type Pagina = (typeof navegacion)[number]["id"];
+export type Pagina = (typeof navegacion)[number]["id"] | "mantenimiento";
 export const paginasDe = (rol: Rol) =>
   navegacion.filter(({ id }) => rol === "ADMIN" || id === "lector" || id === "atenciones");

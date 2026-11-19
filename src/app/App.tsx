@@ -14,6 +14,7 @@ import LectorBiometrico from "../features/lector/LectorBiometrico";
 import { TurnosPage } from "../features/turnos/TurnosPage";
 import { UsuariosPage } from "../features/usuarios/UsuariosPage";
 import { AtencionesPage } from "../features/atenciones/AtencionesPage";
+import { MantenimientoPage } from "../features/mantenimiento/MantenimientoPage";
 import { AppLayout } from "./AppLayout";
 import type { Pagina } from "./navegacion";
 import { ErrorVista } from "../shared/ui/Pagina";
@@ -72,6 +73,7 @@ export function App() {
   }
 
   const vistas = {
+    mantenimiento: <MantenimientoPage rol={sesion.rol} navegar={navegar} />,
     lector: <LectorBiometrico esAdmin={sesion.rol === "ADMIN"} />,
     atenciones: <AtencionesPage esAdmin={sesion.rol === "ADMIN"} />,
     empleados: <EmpleadosPage protegerSalida={protegerSalida} />,

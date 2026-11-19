@@ -1,0 +1,17 @@
+.mantenimiento-grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 8px 2px; }
+.mantenimiento-card { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 16px; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 1px 2px #0f172a0d; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.mantenimiento-card:hover { transform: translateY(-2px); border-color: #b2363659; box-shadow: 0 4px 6px #0f172a1a; }
+.mantenimiento-card:focus-visible { outline: 2px solid #b23636; outline-offset: 2px; }
+.mantenimiento-icono { flex: none; display: grid; place-items: center; padding: 10px; border-radius: 12px; background: #f8fafc; }
+.mantenimiento-icono.empleados { color: #334155; }
+.mantenimiento-icono.usuarios { color: #e11d48; }
+.mantenimiento-icono.areas { color: #16a34a; }
+.mantenimiento-icono.feriados { color: #ef4444; }
+.mantenimiento-icono.turnos { color: #7c3aed; }
+.mantenimiento-texto { flex: 1; min-width: 0; }
+.mantenimiento-texto strong { display: block; color: #0f172a; font-size: 16px; font-weight: 600; }
+.mantenimiento-texto > span { display: block; margin-top: 4px; color: #475569; font-size: 14px; }
+.mantenimiento-flecha { flex: none; margin-top: 4px; color: #94a3b8; transition: transform .2s, color .2s; }
+.mantenimiento-card:hover .mantenimiento-flecha { transform: translateX(2px); color: #b23636; }
+@media (min-width: 640px) { .mantenimiento-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mantenimiento-card { padding: 20px; } .mantenimiento-texto strong { font-size: 18px; } }
+@media (min-width: 1200px) { .mantenimiento-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
