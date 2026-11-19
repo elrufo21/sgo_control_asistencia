@@ -128,7 +128,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
           <>
             <button
               type="button"
-              className="icon-button"
+              className="icon-button action-edit"
               aria-label="Editar"
               disabled={operacion}
               onClick={() => abrir(fila)}
@@ -138,7 +138,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
             {eliminar && (
               <button
                 type="button"
-                className="icon-button delete"
+                className="icon-button action-delete"
                 aria-label="Eliminar"
                 disabled={operacion}
                 onClick={() => quitar(fila.id)}

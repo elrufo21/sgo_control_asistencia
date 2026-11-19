@@ -94,7 +94,7 @@ export function EmpleadosPage({
               </button>
               <button
                 type="button"
-                className="icon-button"
+                className="icon-button action-edit"
                 aria-label="Editar"
                 disabled={!opcionesDisponibles}
                 onClick={() => setFicha({ empleado })}
@@ -103,7 +103,7 @@ export function EmpleadosPage({
               </button>
               <button
                 type="button"
-                className="icon-button delete"
+                className="icon-button action-delete"
                 aria-label={`Eliminar ${empleado.nombres} ${empleado.apellidos}`}
                 title="Eliminar empleado"
                 disabled={eliminando}

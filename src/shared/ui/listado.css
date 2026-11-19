@@ -96,6 +96,13 @@
 .main > main > div:not([hidden]) > .data-table > .data-table-scroll { flex-basis: 0; max-height: none; }
 .data-table-toolbar, .data-table-footer { flex-shrink: 0; }
 .data-table th { position: sticky; top: 0; z-index: 1; }
+.admin-table .actions .action-edit, .admin-table .actions .action-delete { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid; border-radius: 8px; vertical-align: middle; transition: background-color .2s; }
+.admin-table .actions .icon-button + .icon-button { margin-left: 8px; }
+.admin-table .actions .action-edit { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
+.admin-table .actions .action-edit:hover:not(:disabled) { background: #d1fae5; }
+.admin-table .actions .action-delete { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+.admin-table .actions .action-delete:hover:not(:disabled) { background: #fee2e2; }
+.admin-table .actions .icon-button:disabled { opacity: .5; cursor: not-allowed; }
 .data-table-mantenimiento th { font-size: 12px; }
 .data-table-mantenimiento td, .data-table-mantenimiento .data-table-footer { font-size: 14px; }
 .data-table tbody tr:nth-child(even) { background: #f8fbfb; }
