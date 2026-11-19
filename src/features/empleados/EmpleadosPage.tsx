@@ -13,13 +13,17 @@ import { listarTurnos } from "../turnos/api";
 import { eliminarEmpleado, listarEmpleados, type Empleado } from "./api";
 import { EmpleadoForm } from "./EmpleadoForm";
 import HorarioSemanal from "./HorarioSemanal";
+import { formatoFecha } from "../../shared/formatoFecha";
 import "./empleados.css";
 
-const columnas: Columna<Empleado>[] = [
-  ["nombres", "Nombres"],
-  ["apellidos", "Apellidos"],
+type EmpleadoFila = Empleado & { nombreCompleto: string; nacimientoMostrado: string };
+
+const columnas: Columna<EmpleadoFila>[] = [
+  ["nombreCompleto", "Nombres"],
+  ["telefono", "Teléfono"],
+  ["email", "Email"],
+  ["nacimientoMostrado", "F. nacimiento"],
   ["dni", "DNI"],
-  ["area", "Área"],
 ];
 
 export function EmpleadosPage({
@@ -69,7 +73,7 @@ export function EmpleadosPage({
           titulo="Listado de empleados"
           icono={Users}
           columnas={columnas}
-          filas={(empleados.datos ?? []).filter((empleado) => empleado.estado === estado)}
+          filas={(empleados.datos ?? []).filter((empleado) => empleado.estado === estado).map((empleado) => ({ ...empleado, nombreCompleto: `${empleado.nombres ?? ""} ${empleado.apellidos ?? ""}`.trim(), nacimientoMostrado: formatoFecha(empleado.nacimiento ?? null) }))}
           filtros={<FiltroEstado value={estado} onChange={setEstado} />}
           resetPageOn={estado}
           cargando={empleados.cargando}
