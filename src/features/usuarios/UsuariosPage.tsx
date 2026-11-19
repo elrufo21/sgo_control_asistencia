@@ -65,11 +65,13 @@ export function UsuariosPage() {
         campos={(usuario) => (
           <div className="usuario-campos">
             <TextInput type="hidden" name="rol" value={usuario?.rol ?? "EMPLEADO"} readOnly />
+            {usuario && <TextInput type="hidden" name="personalId" value={usuario.personalId ?? ""} readOnly />}
             <Field label="Personal">
               <Select
                 name="personalId"
                 defaultValue={usuario?.personalId ?? ""}
                 required={usuario?.rol !== "ADMIN"}
+                disabled={!!usuario}
               >
                 <option value="">{usuario?.rol === "ADMIN" ? "Sin asignar" : "Seleccione personal"}</option>
                 {empleados.datos?.map(({ id, nombres, apellidos }) => (
@@ -80,7 +82,7 @@ export function UsuariosPage() {
               </Select>
             </Field>
             <Field label="Usuario / Alias">
-              <TextInput name={aliasId} autoComplete="one-time-code" autoCorrect="off" spellCheck={false} data-lpignore="true" data-1p-ignore="true" defaultValue={usuario?.usuario} required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
+              <TextInput name={aliasId} autoComplete="one-time-code" autoCorrect="off" spellCheck={false} data-lpignore="true" data-1p-ignore="true" defaultValue={usuario?.usuario} placeholder="Ej: jramirez" required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
             </Field>
             <Field label="Contraseña">
               <PasswordInput name={claveId} required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
