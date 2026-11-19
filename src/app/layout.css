@@ -153,8 +153,8 @@
 }
 .topbar {
   height: 82px;
-  background: #fff;
-  border-bottom: 1px solid #e3edef;
+  background: #b23636;
+  border-bottom: 1px solid #9f3030;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -164,11 +164,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #9aabb1;
+  color: #ffe5e5;
   font-size: 13px;
 }
 .breadcrumb strong {
-  color: #49636d;
+  color: #fff;
   font-weight: 600;
 }
 .top-user {
@@ -182,11 +182,12 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #49636d;
+  color: #fff;
   text-align: left;
 }
-.top-user-trigger:hover { background: #f3f8f8; }
-.top-user-trigger:focus-visible, .top-user-menu button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+.top-user-trigger:hover { background: #ffffff1f; }
+.top-user-trigger:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.top-user-menu button:focus-visible { outline: 2px solid #b23636; outline-offset: 2px; }
 .top-user-menu {
   position: absolute;
   z-index: 8;
@@ -231,15 +232,16 @@
 }
 .top-user small {
   font-size: 11px;
-  color: #99aab0;
+  color: #ffe5e5;
   margin-top: 3px;
 }
 .menu-button {
   display: none;
   background: none;
   border: 0;
-  color: #2a535c;
+  color: #fff;
 }
+.menu-button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 main {
   max-width: 1500px;
   margin: auto;
@@ -301,6 +303,8 @@ main {
 .main > main:has(> .data-table),
 .main > main:has(> div:not([hidden]) > .data-table) {
   height: calc(100dvh - 82px);
+  max-width: none;
+  padding-inline: clamp(12px, 1.5vw, 24px);
   display: flex;
   flex-direction: column;
 }
