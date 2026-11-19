@@ -174,15 +174,18 @@
 .top-user-trigger {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 4px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 10%);
   color: #fff;
   text-align: left;
+  box-shadow: 0 1px 2px #0000000d;
+  backdrop-filter: blur(4px);
 }
-.top-user-trigger:hover { background: #ffffff1f; }
+.top-user-trigger:hover { background: rgb(255 255 255 / 20%); }
+.top-user-trigger .avatar { background: oklch(96.8% 0.007 247.896); color: oklch(20.8% 0.042 265.755); }
 .top-user-trigger:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .top-user-menu button:focus-visible { outline: 2px solid #b23636; outline-offset: 2px; }
 .top-user-menu {
@@ -229,7 +232,7 @@
 }
 .top-user small {
   font-size: 11px;
-  color: #ffe5e5;
+  color: oklch(92.9% 0.013 255.508);
   margin-top: 3px;
 }
 .menu-button {

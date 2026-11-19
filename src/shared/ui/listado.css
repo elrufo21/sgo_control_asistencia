@@ -99,7 +99,8 @@
 .main > main > .data-table > .data-table-scroll,
 .main > main > div:not([hidden]) > .data-table > .data-table-scroll { flex-basis: 0; max-height: none; }
 .data-table-toolbar, .data-table-footer { flex-shrink: 0; }
-.data-table th { position: sticky; top: 0; z-index: 1; }
+.data-table th { position: sticky; top: 0; z-index: 1; background: oklch(98.4% 0.003 247.858); color: oklch(44.6% 0.043 257.281); border-color: oklch(92.9% 0.013 255.508); }
+.data-table td { color: oklch(37.2% 0.044 257.287); border-color: oklch(92.9% 0.013 255.508); }
 .admin-table .actions .action-edit, .admin-table .actions .action-delete { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid; border-radius: 8px; vertical-align: middle; transition: background-color .2s; }
 .admin-table .actions .icon-button + .icon-button { margin-left: 8px; }
 .admin-table .actions .action-edit { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
@@ -109,7 +110,7 @@
 .admin-table .actions .icon-button:disabled { opacity: .5; cursor: not-allowed; }
 .data-table-mantenimiento th { font-size: 12px; }
 .data-table-mantenimiento td, .data-table-mantenimiento .data-table-footer { font-size: 14px; }
-.data-table tbody tr:nth-child(even) { background: #f8fbfb; }
+.data-table tbody tr:nth-child(even) { background: oklch(98.4% 0.003 247.858 / 45%); }
 .data-table-empty { padding: 40px 24px; text-align: center; color: #789299; }
 .data-table-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 24px; border-top: 1px solid #e2ebed; color: #607b83; font-size: 13px; }
 .data-table-footer-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
