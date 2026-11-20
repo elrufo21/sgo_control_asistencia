@@ -60,8 +60,10 @@
 }
 .login-card h1 { color: #1f2933; }
 .login-card > p { color: #64748b; }
-.login-card .field:has(> input) { padding-top: 0; }
-.login-card .field:has(> input) > span {
+.login-card .field:has(> input),
+.login-card .field:has(> .password-input) { padding-top: 0; }
+.login-card .field:has(> input) > span,
+.login-card .field:has(> .password-input) > span:first-child {
   position: static;
   padding: 0;
   color: #334155;

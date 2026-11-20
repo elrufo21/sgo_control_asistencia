@@ -8,6 +8,8 @@ import { eliminarArea, guardarArea, listarAreas } from "./api";
 export function AreasPage({ volver }: { volver: () => void }) {
   return (
     <RegistroCatalogo
+      modulo="areas"
+      dialogoDxn
       volver={volver}
       titulo="Áreas"
       singular="área"
@@ -21,7 +23,7 @@ export function AreasPage({ volver }: { volver: () => void }) {
       }
       campos={(area) => (
         <Field label="Nombre del área">
-          <TextInput name="nombre" defaultValue={area?.nombre} required />
+          <TextInput name="nombre" defaultValue={area?.nombre} placeholder="Ingrese área" autoFocus required />
         </Field>
       )}
     />

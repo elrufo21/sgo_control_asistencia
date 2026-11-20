@@ -39,7 +39,7 @@ export function AppLayout({
   const usuarioRef = useRef<HTMLDivElement>(null);
   const botonUsuarioRef = useRef<HTMLButtonElement>(null);
   const titulo = pagina === "mantenimiento" ? "Mantenimiento" : navegacion.find(({ id }) => id === pagina)?.titulo;
-  const paginas = paginasDe(sesion.rol);
+  const paginas = paginasDe(sesion);
   const textoBusqueda = normalizeSearchText(busqueda);
   const coincideGrupo = !!textoBusqueda && normalizeSearchText("Mantenimiento").includes(textoBusqueda);
   const paginasMantenimiento = paginas.filter(({ id, titulo }) => mantenimiento.has(id) && (coincideGrupo || normalizeSearchText(titulo).includes(textoBusqueda)));

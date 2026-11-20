@@ -5,6 +5,8 @@ export type Sesion = {
   usuario: string;
   rol: Rol;
   personalId?: number | string | null;
+  areaId?: number | string | null;
+  permisos: string[];
 };
 
 export function consultarSesion(signal: AbortSignal) {

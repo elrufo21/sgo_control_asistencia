@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Camera, Fingerprint } from "lucide-react";
 import { Button, Field, FileInput } from "../../shared/ui/Controls";
 import TextInput from "../../shared/ui/TextInput";
+import PasswordInput from "../../shared/ui/PasswordInput";
 import FotoPersonal from "../../shared/ui/FotoPersonal";
 import { capturarHuella, type Empleado, type ImagenHuella } from "./api";
 import { ApiError, mensajeError, urlApi } from "../../shared/api/http";
@@ -304,7 +305,7 @@ export default function FotoEmpleado({
           {accesoLector && (
             <div className="lector-acceso">
               <strong>
-                Verifica tu cuenta de administrador para registrar la huella
+                Verifica una cuenta con permiso para editar empleados
               </strong>
               <Field label="Usuario">
                 <TextInput
@@ -313,8 +314,7 @@ export default function FotoEmpleado({
                 />
               </Field>
               <Field label="Contraseña">
-                <TextInput
-                  type="password"
+                <PasswordInput
                   value={claveLector}
                   onChange={(e) => setClaveLector(e.currentTarget.value)}
                 />

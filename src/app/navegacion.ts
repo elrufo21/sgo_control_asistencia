@@ -4,10 +4,12 @@ import {
   ClipboardList,
   Clock3,
   Fingerprint,
+  ShieldCheck,
   UserRound,
   Users,
 } from "lucide-react";
-import type { Rol } from "../features/auth/api";
+import type { Sesion } from "../features/auth/api";
+import { tienePermiso } from "../shared/security/permisos";
 
 export const navegacion = [
   { id: "lector", titulo: "Lector biométrico", icono: Fingerprint },
@@ -19,8 +21,8 @@ export const navegacion = [
   { id: "permisos", titulo: "Permisos por horas", icono: ClipboardList },
   { id: "turnos", titulo: "Turnos", icono: Clock3 },
   { id: "reporte", titulo: "Reporte de asistencia", icono: ClipboardList },
+  { id: "seguridad", titulo: "Seguridad", icono: ShieldCheck },
 ] as const;
 
 export type Pagina = (typeof navegacion)[number]["id"] | "mantenimiento";
-export const paginasDe = (rol: Rol) =>
-  navegacion.filter(({ id }) => rol === "ADMIN" || id === "lector" || id === "atenciones");
+export const paginasDe = (sesion: Sesion) => navegacion.filter(({ id }) => tienePermiso(sesion, id));

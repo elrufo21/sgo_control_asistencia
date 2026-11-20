@@ -1,11 +1,12 @@
 import {
   useId,
+  forwardRef,
   type ChangeEvent,
   type ComponentPropsWithoutRef,
   type CompositionEvent,
 } from "react";
 
-export default function TextInput({
+const TextInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef<"input">>(function TextInput({
   type = "text",
   value,
   defaultValue,
@@ -13,7 +14,7 @@ export default function TextInput({
   onCompositionEnd,
   autoComplete: _autoComplete,
   ...props
-}: ComponentPropsWithoutRef<"input">) {
+}, ref) {
   const autocompleteId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const uppercase =
     type !== "password" &&
@@ -59,6 +60,7 @@ export default function TextInput({
   return (
     <input
       {...props}
+      ref={ref}
       type={type}
       autoComplete={type === "password" ? "one-time-code" : ["text", "search", "email", "tel", "url"].includes(type) ? `no-autofill-${autocompleteId}` : "off"}
       autoCorrect="off"
@@ -74,4 +76,5 @@ export default function TextInput({
       onCompositionEnd={handleCompositionEnd}
     />
   );
-}
+});
+export default TextInput;

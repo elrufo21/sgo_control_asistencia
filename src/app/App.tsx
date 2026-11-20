@@ -20,6 +20,9 @@ import type { Pagina } from "./navegacion";
 import { ErrorVista } from "../shared/ui/Pagina";
 import { mensajeError } from "../shared/api/http";
 import { cerrarSesionLector } from "../shared/api/lectorLocal";
+import { paginasDe } from "./navegacion";
+import { PermisosSesion, tienePermiso } from "../shared/security/permisos";
+import { SeguridadPage } from "../features/seguridad/SeguridadPage";
 
 export function App() {
   const [sesion, setSesion] = useState<Sesion | null>();
@@ -46,6 +49,8 @@ export function App() {
   async function navegar(destino: Pagina) {
     if (salida.current && !(await salida.current())) return;
     setError("");
+    try { setSesion(await consultarSesion(new AbortController().signal)); }
+    catch (error) { setError(mensajeError(error)); return; }
     setPagina(destino);
   }
 
@@ -73,9 +78,10 @@ export function App() {
   }
 
   const vistas = {
-    mantenimiento: <MantenimientoPage rol={sesion.rol} navegar={navegar} />,
-    lector: <LectorBiometrico esAdmin={sesion.rol === "ADMIN"} />,
-    atenciones: <AtencionesPage esAdmin={sesion.rol === "ADMIN"} />,
+    mantenimiento: <MantenimientoPage sesion={sesion} navegar={navegar} />,
+    seguridad: <SeguridadPage protegerSalida={protegerSalida} actualizarSesion={async () => setSesion(await consultarSesion(new AbortController().signal))} />,
+    lector: <LectorBiometrico esAdmin />,
+    atenciones: <AtencionesPage puedeEditar={tienePermiso(sesion,"atenciones","editar")} puedePrueba={tienePermiso(sesion,"atenciones","editar") && tienePermiso(sesion,"seguridad","editar") && tienePermiso(sesion,"empleados")} />,
     empleados: <EmpleadosPage protegerSalida={protegerSalida} volver={() => navegar("mantenimiento")} />,
     usuarios: <UsuariosPage volver={() => navegar("mantenimiento")} />,
     areas: <AreasPage volver={() => navegar("mantenimiento")} />,
@@ -84,17 +90,20 @@ export function App() {
     reporte: <ReportePage />,
     permisos: <PermisosPage />,
   };
-  const paginaActual = sesion.rol === "ADMIN" || pagina === "atenciones" ? pagina : "lector";
+  const paginasPermitidas = paginasDe(sesion);
+  const puedeMantenimiento = paginasPermitidas.some(({ id }) => ["empleados", "usuarios", "areas", "feriados", "turnos"].includes(id));
+  const puedeVerPagina = pagina === "mantenimiento" ? puedeMantenimiento : paginasPermitidas.some(({ id }) => id === pagina);
+  const paginaActual = puedeVerPagina ? pagina : paginasPermitidas[0]?.id ?? "lector";
 
   return (
-    <AppLayout
+    <PermisosSesion sesion={sesion}><AppLayout
       sesion={sesion}
       pagina={paginaActual}
       navegar={navegar}
       salir={salir}
     >
       <ErrorVista mensaje={error} cerrar={() => setError("")} />
-      {vistas[paginaActual]}
-    </AppLayout>
+      {paginasPermitidas.length ? vistas[paginaActual] : <p>No tienes módulos asignados. Contacta al administrador.</p>}
+    </AppLayout></PermisosSesion>
   );
 }

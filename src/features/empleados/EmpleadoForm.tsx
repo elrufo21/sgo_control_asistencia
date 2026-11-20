@@ -5,6 +5,7 @@ import type { Turno } from "../turnos/api";
 import { consultar, mensajeError } from "../../shared/api/http";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import { Button, Field, Select } from "../../shared/ui/Controls";
+import { Autocomplete } from "../../shared/ui/Autocomplete";
 import {
   CampoEstado,
   campo,
@@ -18,6 +19,7 @@ import { useConfirmacion } from "../../shared/ui/Confirmacion";
 import { ToastError } from "../../shared/ui/ToastError";
 import { formatoFecha } from "../../shared/formatoFecha";
 import { enfocarCampo } from "../../shared/ui/ValidacionFormulario";
+import { usePermisos } from "../../shared/security/permisos";
 
 function leerFoto(archivo: File) {
   return new Promise<string>((resolve, reject) => {
@@ -48,6 +50,7 @@ export function EmpleadoForm({
   alNuevo: () => void;
   protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
 }) {
+  const permisos = usePermisos("empleados");
   const campoId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formularioRef = useRef<HTMLFormElement>(null);
   const nombreCampo = (indice: number) => `registro_${campoId}_${indice}`;
@@ -170,14 +173,14 @@ export function EmpleadoForm({
             <h1 id="empleado-form-title">{empleado ? "Editar personal" : "Registrar personal"}</h1>
           </div>
           <div className="empleado-form-acciones">
-            {empleado && <Button type="button" variant="secondary" disabled={guardando} onClick={eliminar}><Trash2 size={16} /> Eliminar</Button>}
-            <Button type="button" variant="secondary" className="empleado-boton-nuevo" disabled={guardando || consultandoDni} onClick={() => void nuevo()}><Plus size={16} /> Nuevo</Button>
+            {empleado && permisos.eliminar && <Button type="button" variant="secondary" disabled={guardando} onClick={eliminar}><Trash2 size={16} /> Eliminar</Button>}
+            {permisos.crear && <Button type="button" variant="secondary" className="empleado-boton-nuevo" disabled={guardando || consultandoDni} onClick={() => void nuevo()}><Plus size={16} /> Nuevo</Button>}
             <Button type="submit" disabled={guardando}><Save size={16} /> {guardando ? "Guardando..." : "Guardar"}</Button>
           </div>
         </div>
         <div className="empleado-form-layout">
           <div className="form-grid empleado-datos">
-            <Field label="Área"><Select name="areaId" required defaultValue={empleado?.areaId ?? ""}><option value="">Seleccione área</option>{areas.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
+            <Field label="Área"><Autocomplete name="areaId" required defaultValue={empleado?.areaId ?? ""} placeholder="Seleccione área" onSelect={() => setEditado(true)} opciones={areas.map(({ id, nombre }) => ({ value: String(id), label: nombre }))} /></Field>
             <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput name="consultaDni" data-omitir-al-seleccionar="true" autoComplete="one-time-code" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
             <Field label="Nombres"><TextInput name={nombreCampo(1)} autoComplete="one-time-code" value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="Apellidos"><TextInput name={nombreCampo(2)} autoComplete="one-time-code" value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>

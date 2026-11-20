@@ -19,6 +19,7 @@ export type DatosTurno = {
 };
 export type Turno = DatosTurno & { id: number };
 export const listarTurnos = opcionesCatalogo<Turno>("turnos");
+export const listarTurnosParaEmpleados = opcionesCatalogo<Turno>("catalogos/turnos");
 export const eliminarTurno = (id: number) => cambiar(`turnos/${id}`, "DELETE");
 export const guardarTurno = (id: number | undefined, datos: DatosTurno) =>
   guardarRegistro("turnos", id, datos);

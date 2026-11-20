@@ -1,0 +1,17 @@
+.permisos-area-titulo { margin-bottom: 12px; padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; }
+.permisos-area-titulo h1 { margin: 0; font-size: 24px; }
+.permisos-area-panel { display: grid; gap: 16px; padding: 20px; }
+.permisos-area-seleccion { padding: 10px 12px; border: 1px solid #f1e1dc; border-radius: 8px; background: #fff9f7; color: #475569; }
+.permisos-area-filtros { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.permisos-area-filtros .search { flex: 1 1 260px; width: auto; }
+.permisos-area-filtros label { display: flex; align-items: center; gap: 8px; }
+.permisos-area-panel input[type="checkbox"] { width: 16px; height: 16px; accent-color: #b23636; }
+.permisos-area-scroll { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 10px; }
+.permisos-area-scroll table { min-width: 620px; }
+.permisos-area-scroll th, .permisos-area-scroll td { padding: 10px 12px; border: 1px solid #e2e8f0; font-size: 13px; }
+.permisos-area-scroll thead th { color: #475569; background: #f1f5f9; text-align: center; text-transform: none; letter-spacing: normal; }
+.permisos-area-scroll thead th:first-child, .permisos-area-scroll tbody th { text-align: left; }
+.permisos-area-scroll tbody th { color: #334155; background: white; font-weight: 500; text-transform: none; letter-spacing: normal; }
+.permisos-area-scroll td { text-align: center; }
+.permisos-area-scroll .permisos-area-vacio { padding: 24px; color: #64748b; }
+.permisos-area-acciones { display: flex; justify-content: flex-end; }

@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { FileText } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { listarEmpleados } from "../empleados/api";
+import { listarPersonalParaReporte } from "../empleados/api";
 import { useConsulta } from "../../shared/hooks/useConsulta";
 import { formatoFecha } from "../../shared/formatoFecha";
 import { Button, Field, Select } from "../../shared/ui/Controls";
@@ -32,7 +32,7 @@ export function ReportePage() {
   const [general, setGeneral] = useState(true);
   const [exportando, setExportando] = useState(false);
   const [errorExportacion, setErrorExportacion] = useState("");
-  const empleados = useConsulta(listarEmpleados);
+  const empleados = useConsulta(listarPersonalParaReporte);
   const rangoValido = !!desde && !!hasta && desde <= hasta && (Date.parse(`${hasta}T00:00:00Z`) - Date.parse(`${desde}T00:00:00Z`)) / 86400000 <= 366;
   const consultar = useCallback((signal: AbortSignal) => rangoValido ? consultarReporte(desde, hasta, signal) : Promise.resolve([]), [desde, hasta, rangoValido]);
   const reporte = useConsulta(consultar);

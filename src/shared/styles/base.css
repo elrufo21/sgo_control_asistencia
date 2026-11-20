@@ -355,6 +355,17 @@ td {
   padding: 18px 25px;
   border-top: 1px solid #edf3f3;
 }
+.dialog-dxn { border-radius: 4px; }
+.dialog-dxn .dialog-head { align-items: center; padding: 18px 24px; border-color: #e0e0e0; }
+.dialog-dxn .dialog-head h2 { color: #222; font-size: 16px; }
+.dialog-dxn-cerrar { border: 0; background: transparent; color: #757575; display: grid; place-items: center; padding: 4px; cursor: pointer; }
+.dialog-dxn .form-grid { padding: 40px 54px; grid-template-columns: 1fr; gap: 12px; }
+.dialog-dxn-fecha { width: 50%; }
+.dialog-dxn .dialog-actions { padding: 8px; border-color: #e0e0e0; gap: 6px; }
+.dialog-dxn .dialog-actions .button { border-radius: 4px; background: #1976d2; border-color: #1976d2; color: white; text-transform: uppercase; font-size: 14px; font-weight: 500; padding: 9px 16px; }
+.dialog-dxn .dialog-actions .button:hover { background: #1565c0; }
+.dialog-dxn .dialog-actions .button.secondary { background: transparent; border-color: transparent; color: #1976d2; box-shadow: none; }
+@media (max-width: 500px) { .dialog-dxn .form-grid { padding: 28px 20px; } .dialog-dxn-fecha { width: 100%; } }
 @media (max-width: 800px) {
   .notice {
     align-items: start;

@@ -8,6 +8,7 @@ import TextInput from "../../shared/ui/TextInput";
 import { Listado, type Columna } from "../../shared/ui/Listado";
 import { formatoFecha } from "../../shared/formatoFecha";
 import { enfocarCampo } from "../../shared/ui/ValidacionFormulario";
+import { usePermisos } from "../../shared/security/permisos";
 
 type Permiso = { id: number; personalId: number; empleado: string; fecha: string; estado: string; salida: string | null; retorno: string | null };
 type PermisoFila = Permiso & { fechaMostrada: string; salidaMostrada: string; retornoMostrado: string };
@@ -21,6 +22,7 @@ const minutos = (n: number) => `${Math.floor(n / 60)} h ${n % 60} min`;
 const hoy = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
 export function PermisosPage() {
+  const puedeEditar = usePermisos("permisos").editar;
   const [mes, setMes] = useState(() => hoy().slice(0, 7));
   const [asignacion, setAsignacion] = useState<Resumen | null>(null);
   const [horas, setHoras] = useState("");
@@ -53,10 +55,10 @@ export function PermisosPage() {
   return <>
     <ErrorVista mensaje={error || permisos.error} cerrar={() => setError("")} />
     <h2 style={{ marginBottom: 12 }}>Horas mensuales por empleado</h2>
-    <Listado titulo="Horas mensuales por empleado" icono={Users} filas={resumen} columnas={columnasResumen} cargando={permisos.cargando} filtros={<div className="filters"><Field label="Mes"><TextInput type="month" value={mes} onChange={(e) => setMes(e.currentTarget.value)} /></Field></div>} resetPageOn={mes} acciones={(fila) => <Button type="button" variant="secondary" onClick={() => abrirAsignacion(fila)}>Asignar horas</Button>} />
+    <Listado titulo="Horas mensuales por empleado" icono={Users} filas={resumen} columnas={columnasResumen} cargando={permisos.cargando} filtros={<div className="filters"><Field label="Mes"><TextInput type="month" value={mes} onChange={(e) => setMes(e.currentTarget.value)} /></Field></div>} resetPageOn={mes} acciones={puedeEditar ? (fila) => <Button type="button" variant="secondary" onClick={() => abrirAsignacion(fila)}>Asignar horas</Button> : undefined} />
     <h2 style={{ margin: "24px 0 12px" }}>Marcaciones de permiso del mes</h2>
     <Listado titulo="Marcaciones de permiso del mes" icono={ClipboardList} filas={marcaciones} columnas={columnasPermisos} cargando={permisos.cargando} resetPageOn={mes} acciones={(p) => <div className="listado-controles">
-      {(p.estado === "EN_CURSO" || p.estado === "FINALIZADO") && <Button type="button" variant="secondary" onClick={() => { setCorregir(p); setSalida(p.salida?.slice(0, 16) ?? ""); setRetorno(p.retorno?.slice(0, 16) ?? ""); setRazon(""); }}>Corregir</Button>}
+      {puedeEditar && (p.estado === "EN_CURSO" || p.estado === "FINALIZADO") && <Button type="button" variant="secondary" onClick={() => { setCorregir(p); setSalida(p.salida?.slice(0, 16) ?? ""); setRetorno(p.retorno?.slice(0, 16) ?? ""); setRazon(""); }}>Corregir</Button>}
       <Button type="button" variant="secondary" onClick={() => void (async () => { try { setHistorial(await consultar<Auditoria[]>(`permisos/${p.id}/historial`)); } catch (e) { setError(mensajeError(e)); } })()}>Historial</Button>
     </div>} />
     {asignacion && <div className="overlay"><div className="dialog" role="dialog" aria-modal="true" aria-labelledby="asignacion-titulo"><div className="dialog-head"><h2 id="asignacion-titulo">Horas mensuales de {asignacion.empleado}</h2></div><form onSubmit={guardarAsignacion}><div className="form-grid" style={{ padding: 20 }}><p>La asignación será vigente desde {mes} y continuará en los meses siguientes hasta que se cambie.</p><Field label="Horas"><TextInput type="number" min="0" max="744" step="1" required value={horas} onChange={(e) => setHoras(e.currentTarget.value)} /></Field><Field label="Minutos"><TextInput type="number" min="0" max="59" step="1" required value={minutosExtra} onChange={(e) => setMinutosExtra(e.currentTarget.value)} /></Field></div><div className="dialog-actions"><Button type="button" variant="secondary" onClick={() => setAsignacion(null)}>Cerrar</Button><Button type="submit" disabled={ocupado}>Guardar asignación</Button></div></form></div></div>}

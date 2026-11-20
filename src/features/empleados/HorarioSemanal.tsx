@@ -7,6 +7,7 @@ import { listarTurnos, guardarTurno, type Turno } from "../turnos/api";
 import { mensajeError } from "../../shared/api/http";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import { enfocarCampo } from "../../shared/ui/ValidacionFormulario";
+import { usePermisos } from "../../shared/security/permisos";
 
 const dias = [
   "Lunes",
@@ -27,6 +28,7 @@ export default function HorarioSemanal({
   turnos: Turno[];
   onClose: () => void;
 }) {
+  const puedeCrearTurnos = usePermisos("turnos").crear;
   const formularioRef = useRef<HTMLFormElement>(null);
   const [horario, setHorario] = useState<string[] | null>(null),
     [turnoRapido, setTurnoRapido] = useState(""),
@@ -166,7 +168,7 @@ export default function HorarioSemanal({
         </div>
         <form ref={formularioRef} onSubmit={guardar}>
           <div className="schedule-content">
-            <Button
+            {puedeCrearTurnos && <Button
               type="button"
               variant="secondary"
               disabled={busy}
@@ -176,7 +178,7 @@ export default function HorarioSemanal({
               }}
             >
               {crearTurno ? "Cerrar nuevo turno" : "+ Crear turno"}
-            </Button>
+            </Button>}
             {crearTurno && (
               <div className="schedule-create">
                 <strong>Nuevo turno</strong>

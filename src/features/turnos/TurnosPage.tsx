@@ -12,6 +12,7 @@ import { eliminarTurno, guardarTurno, listarTurnos } from "./api";
 export function TurnosPage({ volver }: { volver: () => void }) {
   return (
     <RegistroCatalogo
+      modulo="turnos"
       volver={volver}
       titulo="Turnos"
       singular="turno"

@@ -1,5 +1,5 @@
 import { ArrowRight, CalendarDays, Clock3, Layers, UserCheck2, Users2 } from "lucide-react";
-import type { Rol } from "../auth/api";
+import type { Sesion } from "../auth/api";
 import { paginasDe, type Pagina } from "../../app/navegacion";
 import "./mantenimiento.css";
 
@@ -11,8 +11,8 @@ const modulos = [
   { id: "turnos", titulo: "Turnos", descripcion: "Administra los turnos del personal.", icono: Clock3, color: "turnos" },
 ] as const;
 
-export function MantenimientoPage({ rol, navegar }: { rol: Rol; navegar: (pagina: Pagina) => void }) {
-  const permitidas = new Set(paginasDe(rol).map(({ id }) => id));
+export function MantenimientoPage({ sesion, navegar }: { sesion: Sesion; navegar: (pagina: Pagina) => void }) {
+  const permitidas = new Set(paginasDe(sesion).map(({ id }) => id));
   return <div className="mantenimiento-grid">
     {modulos.filter(({ id }) => permitidas.has(id)).map(({ id, titulo, descripcion, icono: Icono, color }) => (
       <button type="button" className="mantenimiento-card" key={id} onClick={() => navegar(id)}>

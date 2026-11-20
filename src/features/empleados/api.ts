@@ -39,6 +39,8 @@ type Horario = {
 };
 
 export const listarEmpleados = opcionesCatalogo<Empleado>("empleados");
+export const listarPersonalParaUsuarios = opcionesCatalogo<Pick<Empleado, "id" | "nombres" | "apellidos">>("catalogos/personal?uso=usuarios");
+export const listarPersonalParaReporte = opcionesCatalogo<Pick<Empleado, "id" | "nombres" | "apellidos">>("catalogos/personal?uso=reporte");
 export const eliminarEmpleado = (id: number) =>
   cambiar(`empleados/${id}`, "DELETE");
 export function guardarEmpleado(

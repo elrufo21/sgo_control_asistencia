@@ -2,9 +2,10 @@ import { useState, type FormEvent } from "react";
 import { Activity, ChevronRight, Fingerprint } from "lucide-react";
 import { Button, Field } from "../../shared/ui/Controls";
 import TextInput from "../../shared/ui/TextInput";
+import PasswordInput from "../../shared/ui/PasswordInput";
 import { campo } from "../../shared/ui/camposRegistro";
 import { mensajeError } from "../../shared/api/http";
-import { iniciarSesion, type Sesion } from "./api";
+import { consultarSesion, iniciarSesion, type Sesion } from "./api";
 import { ErrorVista } from "../../shared/ui/Pagina";
 import "./login.css";
 
@@ -23,9 +24,8 @@ export function LoginPage({
     setError("");
     const data = new FormData(e.currentTarget);
     try {
-      onLogin(
-        await iniciarSesion(campo(data, "usuario"), campo(data, "clave")),
-      );
+      await iniciarSesion(campo(data, "usuario"), campo(data, "clave"));
+      onLogin(await consultarSesion(new AbortController().signal));
     } catch (error) {
       setError(mensajeError(error));
     } finally {
@@ -47,9 +47,8 @@ export function LoginPage({
             <TextInput name="usuario" required />
           </Field>
           <Field label="Contraseña">
-            <TextInput
+            <PasswordInput
               name="clave"
-              type="password"
               required
             />
           </Field>

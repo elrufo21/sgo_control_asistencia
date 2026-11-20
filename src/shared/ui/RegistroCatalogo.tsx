@@ -1,13 +1,14 @@
 import { useCallback, useState, type FormEvent, type ReactNode } from "react";
-import { Pencil, Trash2, type LucideIcon } from "lucide-react";
+import { Pencil, Trash2, X, type LucideIcon } from "lucide-react";
 import { mensajeError } from "../api/http";
 import { useConsulta } from "../hooks/useConsulta";
 import { Listado, type Columna } from "./Listado";
 import { AccionesFormulario, ErrorVista } from "./Pagina";
-import { BotonNuevo } from "./Controls";
+import { BotonNuevo, Button } from "./Controls";
 import { useConfirmacion } from "./Confirmacion";
 import { ToastError } from "./ToastError";
 import { enfocarCampo, ErrorCampo } from "./ValidacionFormulario";
+import { usePermisos } from "../security/permisos";
 
 export function RegistroCatalogo<Fila extends { id: number }>({
   titulo,
@@ -22,6 +23,8 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   filtrar,
   resetPageOn,
   volver,
+  modulo,
+  dialogoDxn = false,
 }: {
   titulo: string;
   singular: string;
@@ -36,7 +39,10 @@ export function RegistroCatalogo<Fila extends { id: number }>({
   filtrar?: (fila: Fila) => boolean;
   resetPageOn?: unknown;
   volver: () => void;
+  modulo: string;
+  dialogoDxn?: boolean;
 }) {
+  const permisos = usePermisos(modulo);
   const { datos, cargando, error, recargar } = useConsulta(listar);
   const [edicion, setEdicion] = useState<{ fila?: Fila }>();
   const [operacion, setOperacion] = useState(false);
@@ -117,17 +123,17 @@ export function RegistroCatalogo<Fila extends { id: number }>({
         resetPageOn={resetPageOn}
         columnas={columnas}
         cargando={cargando}
-        accionCabecera={
+        accionCabecera={permisos.crear ? (
           <BotonNuevo
             type="button"
             nombre={singular}
             disabled={operacion}
             onClick={() => abrir()}
           />
-        }
-        acciones={(fila) => (
+        ) : undefined}
+        acciones={permisos.editar || (permisos.eliminar && eliminar) ? (fila) => (
           <>
-            <button
+            {permisos.editar && <button
               type="button"
               className="icon-button action-edit"
               aria-label="Editar"
@@ -135,8 +141,8 @@ export function RegistroCatalogo<Fila extends { id: number }>({
               onClick={() => abrir(fila)}
             >
               <Pencil size={16} />
-            </button>
-            {eliminar && (
+            </button>}
+            {eliminar && permisos.eliminar && (
               <button
                 type="button"
                 className="icon-button action-delete"
@@ -148,7 +154,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
               </button>
             )}
           </>
-        )}
+        ) : undefined}
       />
       {edicion && (
         <div
@@ -158,7 +164,7 @@ export function RegistroCatalogo<Fila extends { id: number }>({
           }}
         >
           <div
-            className="dialog"
+            className={`dialog${dialogoDxn ? " dialog-dxn" : ""}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="dialog-title"
@@ -166,21 +172,22 @@ export function RegistroCatalogo<Fila extends { id: number }>({
             <div className="dialog-head">
               <div>
                 <h2 id="dialog-title">
-                  {edicion.fila ? "Editar" : "Nuevo"} {singular}
+                  {edicion.fila ? "Editar" : dialogoDxn ? "Crear" : "Nuevo"} {singular}
                 </h2>
               </div>
+              {dialogoDxn && <button type="button" className="dialog-dxn-cerrar" aria-label="Cerrar" disabled={operacion} onClick={cerrar}><X size={20} /></button>}
             </div>
             <form autoComplete="off" onSubmit={enviar}>
               <div className="form-grid">{campos(edicion.fila)}</div>
-              <AccionesFormulario
+              {dialogoDxn ? <div className="dialog-actions"><Button type="button" variant="secondary" onClick={cerrar} disabled={operacion}>Cancelar</Button><Button type="submit" disabled={operacion}>{operacion ? "Guardando..." : "Guardar"}</Button></div> : <AccionesFormulario
                 guardando={operacion}
                 cancelar={cerrar}
                 eliminar={
-                  eliminar && edicion.fila
+                  permisos.eliminar && eliminar && edicion.fila
                     ? () => quitar(edicion.fila!.id)
                     : undefined
                 }
-              />
+              />}
             </form>
           </div>
         </div>

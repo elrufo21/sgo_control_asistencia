@@ -8,6 +8,8 @@ import { eliminarFeriado, guardarFeriado, listarFeriados } from "./api";
 export function FeriadosPage({ volver }: { volver: () => void }) {
   return (
     <RegistroCatalogo
+      modulo="feriados"
+      dialogoDxn
       volver={volver}
       titulo="Feriados"
       singular="feriado"
@@ -27,14 +29,14 @@ export function FeriadosPage({ volver }: { volver: () => void }) {
       }
       campos={(feriado) => (
         <>
-          <Field label="Fecha">
+          <div className="dialog-dxn-fecha"><Field label="Fecha">
             <TextInput
               name="fecha"
               type="date"
-              defaultValue={feriado?.fecha}
+              defaultValue={feriado?.fecha ?? new Date().toLocaleDateString("sv-SE")}
               required
             />
-          </Field>
+          </Field></div>
           <Field label="Motivo">
             <TextInput name="nombre" defaultValue={feriado?.nombre} placeholder="Motivo del feriado" required />
           </Field>

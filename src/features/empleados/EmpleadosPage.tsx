@@ -8,12 +8,13 @@ import { ErrorVista } from "../../shared/ui/Pagina";
 import { Listado, type Columna } from "../../shared/ui/Listado";
 import { BotonNuevo } from "../../shared/ui/Controls";
 import { FiltroEstado, type FiltroEstadoValor } from "../../shared/ui/FiltroEstado";
-import { listarAreas } from "../areas/api";
-import { listarTurnos } from "../turnos/api";
+import { listarAreasParaEmpleados } from "../areas/api";
+import { listarTurnosParaEmpleados } from "../turnos/api";
 import { eliminarEmpleado, listarEmpleados, type Empleado } from "./api";
 import { EmpleadoForm } from "./EmpleadoForm";
 import HorarioSemanal from "./HorarioSemanal";
 import { formatoFecha } from "../../shared/formatoFecha";
+import { usePermisos } from "../../shared/security/permisos";
 import "./empleados.css";
 
 type EmpleadoFila = Empleado & { nombreCompleto: string; nacimientoMostrado: string };
@@ -33,9 +34,10 @@ export function EmpleadosPage({
   protegerSalida: (verificar: (() => Promise<boolean>) | null) => void;
   volver: () => void;
 }) {
+  const permisos = usePermisos("empleados");
   const empleados = useConsulta(listarEmpleados);
-  const areas = useConsulta(listarAreas);
-  const turnos = useConsulta(listarTurnos);
+  const areas = useConsulta(listarAreasParaEmpleados);
+  const turnos = useConsulta(listarTurnosParaEmpleados);
   const [estado, setEstado] = useState<FiltroEstadoValor>("ACTIVO");
   const [ficha, setFicha] = useState<{ empleado?: Empleado }>();
   const [versionFicha, setVersionFicha] = useState(0);
@@ -77,17 +79,17 @@ export function EmpleadosPage({
           filtros={<FiltroEstado value={estado} onChange={setEstado} />}
           resetPageOn={estado}
           cargando={empleados.cargando}
-          accionCabecera={
+          accionCabecera={permisos.crear ? (
             <BotonNuevo
               type="button"
               nombre="empleado"
               disabled={!opcionesDisponibles || opcionesCargando}
               onClick={() => setFicha({})}
             />
-          }
-          acciones={(empleado) => (
+          ) : undefined}
+          acciones={permisos.editar || permisos.eliminar ? (empleado) => (
             <>
-              <button
+              {permisos.editar && <button
                 type="button"
                 className="icon-button"
                 aria-label="Asignar horario"
@@ -96,8 +98,8 @@ export function EmpleadosPage({
                 onClick={() => setHorario(empleado)}
               >
                 <CalendarDays size={16} />
-              </button>
-              <button
+              </button>}
+              {permisos.editar && <button
                 type="button"
                 className="icon-button action-edit"
                 aria-label="Editar"
@@ -105,8 +107,8 @@ export function EmpleadosPage({
                 onClick={() => setFicha({ empleado })}
               >
                 <Pencil size={16} />
-              </button>
-              <button
+              </button>}
+              {permisos.eliminar && <button
                 type="button"
                 className="icon-button action-delete"
                 aria-label={`Eliminar ${empleado.nombres} ${empleado.apellidos}`}
@@ -115,9 +117,9 @@ export function EmpleadosPage({
                 onClick={() => void quitar(empleado)}
               >
                 <Trash2 size={16} />
-              </button>
+              </button>}
             </>
-          )}
+          ) : undefined}
         />
       </div>
       {ficha &&
