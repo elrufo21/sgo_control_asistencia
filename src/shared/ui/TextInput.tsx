@@ -1,5 +1,4 @@
 import {
-  useId,
   forwardRef,
   type ChangeEvent,
   type ComponentPropsWithoutRef,
@@ -12,10 +11,9 @@ const TextInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef<"input">
   defaultValue,
   onChange,
   onCompositionEnd,
-  autoComplete: _autoComplete,
+  autoComplete,
   ...props
 }, ref) {
-  const autocompleteId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const uppercase =
     type !== "password" &&
     ["text", "search", "email", "tel", "url"].includes(type);
@@ -56,13 +54,12 @@ const TextInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef<"input">
     onCompositionEnd?.(event);
   }
 
-  // Chromium puede ignorar "off" para campos que identifica como direcciones.
   return (
     <input
       {...props}
       ref={ref}
       type={type}
-      autoComplete={type === "password" ? "one-time-code" : ["text", "search", "email", "tel", "url"].includes(type) ? `no-autofill-${autocompleteId}` : "off"}
+      autoComplete={type === "hidden" ? undefined : autoComplete ?? (uppercase || type === "number" ? "one-time-code" : "off")}
       autoCorrect="off"
       autoCapitalize="off"
       spellCheck={false}

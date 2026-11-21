@@ -52,7 +52,8 @@ export function EmpleadoForm({
 }) {
   const permisos = usePermisos("empleados");
   const campoId = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const formularioRef = useRef<HTMLFormElement>(null);
+  // El navegador usa name o id para buscar entradas anteriores.
+  const consultaDniRef = useRef<HTMLInputElement>(null);
   const nombreCampo = (indice: number) => `registro_${campoId}_${indice}`;
   const [consultaDni, setConsultaDni] = useState("");
   const [consultandoDni, setConsultandoDni] = useState(false);
@@ -121,7 +122,7 @@ export function EmpleadoForm({
   }
 
   async function buscarDni() {
-    if (!/^\d{8}$/.test(consultaDni)) { setError("Ingresa los 8 dígitos del DNI."); enfocarCampo(formularioRef.current?.elements.namedItem("consultaDni") as Element | null); return; }
+    if (!/^\d{8}$/.test(consultaDni)) { setError("Ingresa los 8 dígitos del DNI."); enfocarCampo(consultaDniRef.current); return; }
     setConsultandoDni(true); setError("");
     try {
       const resultado = await consultar<{ dni: string; nombres: string; apellidos: string }>(`empleados/consulta-dni/${consultaDni}`);
@@ -166,7 +167,7 @@ export function EmpleadoForm({
   return (
     <section className="panel empleado-formulario" aria-labelledby="empleado-form-title">
       <ToastError mensaje={errorEliminacion} cerrar={cerrarToast} />
-      <form ref={formularioRef} autoComplete="off" onSubmit={guardar} onChange={() => setEditado(true)}>
+      <form autoComplete="off" onSubmit={guardar} onChange={() => setEditado(true)}>
         <div className="empleado-form-head">
           <div className="empleado-form-titulo">
             <Button type="button" variant="secondary" disabled={guardando} onClick={cancelar} aria-label="Volver a empleados"><ArrowLeft size={16} /></Button>
@@ -181,15 +182,15 @@ export function EmpleadoForm({
         <div className="empleado-form-layout">
           <div className="form-grid empleado-datos">
             <Field label="Área"><Autocomplete name="areaId" required defaultValue={empleado?.areaId ?? ""} placeholder="Seleccione área" onSelect={() => setEditado(true)} opciones={areas.map(({ id, nombre }) => ({ value: String(id), label: nombre }))} /></Field>
-            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput name="consultaDni" data-omitir-al-seleccionar="true" autoComplete="one-time-code" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
-            <Field label="Nombres"><TextInput name={nombreCampo(1)} autoComplete="one-time-code" value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
-            <Field label="Apellidos"><TextInput name={nombreCampo(2)} autoComplete="one-time-code" value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
-            <Field label="DNI"><TextInput name={nombreCampo(3)} autoComplete="one-time-code" value={dni} inputMode="numeric" pattern="[0-9]{8}" title="El DNI debe tener 8 dígitos" onChange={(e) => setDni(e.currentTarget.value.replace(/\D/g, ""))} required maxLength={8} /></Field>
-            <Field label="Teléfono"><TextInput name={nombreCampo(5)} autoComplete="one-time-code" defaultValue={empleado?.telefono ?? ""} maxLength={40} /></Field>
+            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput ref={consultaDniRef} data-omitir-al-seleccionar="true" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
+            <Field label="Nombres"><TextInput name={nombreCampo(1)} value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
+            <Field label="Apellidos"><TextInput name={nombreCampo(2)} value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
+            <Field label="DNI"><TextInput name={nombreCampo(3)} value={dni} inputMode="numeric" pattern="[0-9]{8}" title="El DNI debe tener 8 dígitos" onChange={(e) => setDni(e.currentTarget.value.replace(/\D/g, ""))} required maxLength={8} /></Field>
+            <Field label="Teléfono"><TextInput name={nombreCampo(5)} defaultValue={empleado?.telefono ?? ""} maxLength={40} /></Field>
             <Field label="Fecha de nacimiento"><TextInput name="nacimiento" type="date" value={nacimiento} onChange={(e) => setNacimiento(e.currentTarget.value)} /></Field>
             <Field label="Edad"><TextInput value={edad} readOnly disabled /></Field>
-            <Field label="Dirección"><TextInput name={nombreCampo(4)} autoComplete="one-time-code" defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
-            <Field label="Correo"><TextInput name={nombreCampo(6)} autoComplete="one-time-code" type="email" pattern="\S+@\S+\.\S+" title="Ingrese un correo válido" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
+            <Field label="Dirección"><TextInput name={nombreCampo(4)} defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
+            <Field label="Correo"><TextInput name={nombreCampo(6)} type="email" pattern="\S+@\S+\.\S+" title="Ingrese un correo válido" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
             <Field label={empleado ? "Fecha y hora de ingreso" : "Fecha de ingreso"}><TextInput value={ingreso} readOnly /></Field>
             <CampoEstado estado={empleado?.estado} />
             <Field label="Turno sugerido para horario"><Select name="turnoId" defaultValue={empleado?.turnoId ?? ""}><option value="">Sin asignar</option>{turnos.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>

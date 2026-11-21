@@ -29,7 +29,7 @@ export function Autocomplete({ name, opciones, defaultValue = "", placeholder, r
   }
   return <div className="autocomplete">
     <input type="hidden" name={name} value={seleccion} disabled={disabled} />
-    <TextInput ref={input} role="combobox" aria-label={placeholder} aria-expanded={abierto} aria-controls={`${id}-lista`} aria-autocomplete="list" aria-activedescendant={abierto && opcionesVisibles[indice] ? `${id}-${indice}` : undefined} autoComplete="off" placeholder={placeholder} value={texto} required={required} disabled={disabled}
+    <TextInput ref={input} role="combobox" aria-label={placeholder} aria-expanded={abierto} aria-controls={`${id}-lista`} aria-autocomplete="list" aria-activedescendant={abierto && opcionesVisibles[indice] ? `${id}-${indice}` : undefined} placeholder={placeholder} value={texto} required={required} disabled={disabled}
       onFocus={() => { setAbierto(true); setIndice(0); }}
       onBlur={() => { setAbierto(false); if (!seleccion) setTexto(""); }}
       onChange={(e) => { setTexto(e.currentTarget.value); setSeleccion(""); setAbierto(true); setIndice(0); e.currentTarget.setCustomValidity(required ? "Seleccione una opción de la lista." : ""); }}

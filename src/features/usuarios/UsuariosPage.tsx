@@ -80,13 +80,13 @@ export function UsuariosPage({ volver }: { volver: () => void }) {
               />
             </Field>
             <Field label="Usuario / Alias">
-              <TextInput name={aliasId} autoComplete="one-time-code" autoCorrect="off" spellCheck={false} data-lpignore="true" data-1p-ignore="true" defaultValue={usuario?.usuario} placeholder="Ej: jramirez" required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
+              <TextInput name={aliasId} defaultValue={usuario?.usuario} placeholder="Ej: jramirez" required onChange={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\s+/g, ""); }} />
             </Field>
             <Field label="Contraseña">
-              <PasswordInput name={claveId} required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
+              <PasswordInput name={claveId} evitarSugerencias required={!usuario} minLength={6} placeholder={usuario ? "Dejar vacío para conservar" : "Ingrese contraseña"} />
             </Field>
             <Field label="Confirmar contraseña">
-              <PasswordInput name={confirmarClaveId} required={!usuario} placeholder="Repita la contraseña" />
+              <PasswordInput name={confirmarClaveId} evitarSugerencias required={!usuario} placeholder="Repita la contraseña" />
             </Field>
             <CampoEstado estado={usuario?.estado} />
           </div>
