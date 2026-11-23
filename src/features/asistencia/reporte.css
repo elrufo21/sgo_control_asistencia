@@ -10,3 +10,4 @@
 .reporte-asistencia { color: #047857; }
 .reporte-marca-faltante, .reporte-incompleta { display: inline-flex; align-items: center; gap: 5px; color: #dc2626; }
 .reporte-incompleta { font-weight: 600; }
+.reporte-completa { display: inline-flex; align-items: center; gap: 5px; color: #047857; font-weight: 600; }

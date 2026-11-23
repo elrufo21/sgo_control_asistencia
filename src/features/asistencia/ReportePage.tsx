@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FileText, Search, TriangleAlert } from "lucide-react";
+import { CheckCircle2, FileText, Search, TriangleAlert } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { listarPersonalParaReporte } from "../empleados/api";
 import { useConsulta } from "../../shared/hooks/useConsulta";
@@ -27,7 +27,7 @@ const columnas: ColumnDef<FilaReporte, unknown>[] = [
   { accessorKey: "salida", header: "Salida", cell: ({ row }) => marcacion(row.original.salida, row.original, "salida") },
   { accessorKey: "tardanzas", header: "N.º tardanzas" },
   { accessorKey: "estado", header: "Asistencia", cell: ({ row }) => <strong className={row.original.estado === "TARDANZA" ? "reporte-tardanza" : "reporte-asistencia"}>{row.original.estado}</strong> },
-  { accessorKey: "estadoMarcacion", header: "Marcaciones", cell: ({ row }) => row.original.estadoMarcacion === "INCOMPLETA" ? <span className="reporte-incompleta"><TriangleAlert size={16} aria-hidden="true" /> Incompleta</span> : row.original.estadoMarcacion === "EN CURSO" ? "En curso" : row.original.estadoMarcacion === "SIN HORARIO" ? "Sin horario registrado" : row.original.estadoMarcacion === "COMPLETA" ? "Completa" : "—" },
+  { accessorKey: "estadoMarcacion", header: "Marcaciones", cell: ({ row }) => row.original.estadoMarcacion === "INCOMPLETA" ? <span className="reporte-incompleta"><TriangleAlert size={16} aria-hidden="true" /> Incompleta</span> : row.original.estadoMarcacion === "EN CURSO" ? "En curso" : row.original.estadoMarcacion === "SIN HORARIO" ? "Sin horario registrado" : row.original.estadoMarcacion === "COMPLETA" ? <span className="reporte-completa"><CheckCircle2 size={16} aria-hidden="true" /> Completa</span> : "—" },
 ];
 const hoy = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
