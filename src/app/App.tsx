@@ -3,26 +3,26 @@ import {
   consultarSesion,
   cerrarSesion,
   type Sesion,
-} from "../features/auth/api";
-import { LoginPage } from "../features/auth/LoginPage";
-import { AreasPage } from "../features/areas/AreasPage";
-import { PermisosPage } from "../features/permisos/PermisosPage";
-import { ReportePage } from "../features/asistencia/ReportePage";
-import { EmpleadosPage } from "../features/empleados/EmpleadosPage";
-import { FeriadosPage } from "../features/feriados/FeriadosPage";
-import LectorBiometrico from "../features/lector/LectorBiometrico";
-import { TurnosPage } from "../features/turnos/TurnosPage";
-import { UsuariosPage } from "../features/usuarios/UsuariosPage";
-import { AtencionesPage } from "../features/atenciones/AtencionesPage";
-import { MantenimientoPage } from "../features/mantenimiento/MantenimientoPage";
+} from "./auth/services/authService";
+import { LoginPage } from "./auth/pages/LoginPage";
+import { AreasPage } from "./mantenimiento/areas/pages/AreasPage";
+import { PermisosPage } from "./permisos/pages/PermisosPage";
+import { ReportePage } from "./asistencia/pages/ReportePage";
+import { EmpleadosPage } from "./mantenimiento/empleados/pages/EmpleadosPage";
+import { FeriadosPage } from "./mantenimiento/feriados/pages/FeriadosPage";
+import LectorBiometrico from "./lector/pages/LectorBiometrico";
+import { TurnosPage } from "./mantenimiento/turnos/pages/TurnosPage";
+import { UsuariosPage } from "./mantenimiento/usuarios/pages/UsuariosPage";
+import { AtencionesPage } from "./atenciones/pages/AtencionesPage";
+import { MantenimientoPage } from "./mantenimiento/pages/MantenimientoPage";
 import { AppLayout } from "./AppLayout";
 import type { Pagina } from "./navegacion";
-import { ErrorVista } from "../shared/ui/Pagina";
+import { ErrorVista } from "../components/Pagina";
 import { mensajeError } from "../shared/api/http";
 import { cerrarSesionLector } from "../shared/api/lectorLocal";
 import { paginasDe } from "./navegacion";
 import { PermisosSesion, tienePermiso } from "../shared/security/permisos";
-import { SeguridadPage } from "../features/seguridad/SeguridadPage";
+import { SeguridadPage } from "./seguridad/pages/SeguridadPage";
 
 export function App() {
   const [sesion, setSesion] = useState<Sesion | null>();

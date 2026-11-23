@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from "react";
-import type { Sesion } from "../../features/auth/api";
+import type { Sesion } from "../../app/auth/services/authService";
 
 export type Accion = "ver" | "crear" | "editar" | "eliminar";
 export const tienePermiso = (sesion: Sesion, modulo: string, accion: Accion = "ver") =>

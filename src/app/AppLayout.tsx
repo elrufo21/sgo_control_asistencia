@@ -11,9 +11,9 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import type { Sesion } from "../features/auth/api";
-import SearchInput from "../shared/ui/SearchInput";
-import { normalizeSearchText } from "../shared/ui/tableSearch";
+import type { Sesion } from "./auth/services/authService";
+import SearchInput from "../components/SearchInput";
+import { normalizeSearchText } from "../components/tableSearch";
 import { navegacion, paginasDe, type Pagina } from "./navegacion";
 import "./layout.css";
 

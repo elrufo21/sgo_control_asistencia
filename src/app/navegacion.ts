@@ -8,7 +8,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import type { Sesion } from "../features/auth/api";
+import type { Sesion } from "./auth/services/authService";
 import { tienePermiso } from "../shared/security/permisos";
 
 export const navegacion = [
