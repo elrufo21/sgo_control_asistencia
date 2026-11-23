@@ -193,7 +193,7 @@ export function EmpleadoForm({
             <Field label="Correo"><TextInput name={nombreCampo(6)} type="email" pattern="\S+@\S+\.\S+" title="Ingrese un correo válido" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
             <Field label={empleado ? "Fecha y hora de ingreso" : "Fecha de ingreso"}><TextInput value={ingreso} readOnly /></Field>
             <Field label="Fecha y hora de actualización"><TextInput value={formatoFecha(empleado?.actualizacion ?? null)} readOnly /></Field>
-            <CampoEstado estado={empleado?.estado} />
+            <CampoEstado estado={empleado?.estado} editable={!!empleado} />
             <Field label="Turno sugerido para horario"><Select name="turnoId" defaultValue={empleado?.turnoId ?? ""}><option value="">Sin asignar</option>{turnos.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
           </div>
           <FotoEmpleado empleado={empleado ?? {}} foto={foto} setFoto={(valor) => { setFoto(valor); setEditado(true); }} eliminar={eliminarFoto} setEliminar={setEliminarFoto} setError={setError} onHuellaRegistrada={alGuardar} />

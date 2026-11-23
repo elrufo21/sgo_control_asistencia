@@ -1,4 +1,4 @@
-import { Field } from "./Controls";
+import { Field, Select } from "./Controls";
 import TextInput from "./TextInput";
 import type { Estado } from "../api/catalogo";
 
@@ -16,10 +16,10 @@ export function estadoRegistro(datos: FormData): Estado {
   return campo(datos, "estado") === "INACTIVO" ? "INACTIVO" : "ACTIVO";
 }
 
-export function CampoEstado({ estado = "ACTIVO" }: { estado?: Estado }) {
+export function CampoEstado({ estado = "ACTIVO", editable = false }: { estado?: Estado; editable?: boolean }) {
   return (
     <Field label="Estado">
-      <TextInput name="estado" value={estado} readOnly />
+      {editable ? <Select name="estado" defaultValue={estado}><option value="ACTIVO">ACTIVO</option><option value="INACTIVO">INACTIVO</option></Select> : <TextInput name="estado" value={estado} readOnly />}
     </Field>
   );
 }
