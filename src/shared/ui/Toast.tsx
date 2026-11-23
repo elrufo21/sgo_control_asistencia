@@ -15,8 +15,8 @@ export function Toast({ mensaje, tipo = "error", cerrar }: { mensaje: string; ti
   if (!mensaje || !visible) return null;
   const Icono = tipo === "exito" ? CheckCircle2 : CircleAlert;
   return createPortal(<div className={`toast toast-${tipo}`} role={tipo === "error" ? "alert" : "status"}>
-    <Icono size={20} aria-hidden="true" />
+    <div className="toast-icono"><Icono size={16} aria-hidden="true" /></div>
     <span>{mensaje}</span>
-    <button type="button" onClick={() => { setVisible(false); cerrarRef.current?.(); }} aria-label="Cerrar notificación"><X size={18} /></button>
+    <button type="button" onClick={() => { setVisible(false); cerrarRef.current?.(); }} aria-label="Cerrar notificación"><X size={16} /></button>
   </div>, document.body);
 }

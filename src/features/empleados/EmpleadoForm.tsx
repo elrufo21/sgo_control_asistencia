@@ -88,7 +88,7 @@ export function EmpleadoForm({
   }
 
   async function nuevo() {
-    if (!guardando && !consultandoDni && (!editado || await confirmar({ titulo: "Cambios sin guardar", mensaje: "Al crear una ficha nueva perderás los cambios realizados.", confirmar: "Crear ficha nueva" }))) alNuevo();
+    if (!guardando && !consultandoDni && (!editado || await confirmar({ titulo: "Cambios sin guardar", mensaje: "Al crear una ficha nueva perderás los cambios realizados.", confirmar: "Nuevo" }))) alNuevo();
   }
 
   async function guardar(evento: FormEvent<HTMLFormElement>) {
@@ -182,7 +182,7 @@ export function EmpleadoForm({
         <div className="empleado-form-layout">
           <div className="form-grid empleado-datos">
             <Field label="Área"><Autocomplete name="areaId" required defaultValue={empleado?.areaId ?? ""} placeholder="Seleccione área" onSelect={() => setEditado(true)} opciones={areas.map(({ id, nombre }) => ({ value: String(id), label: nombre }))} /></Field>
-            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput ref={consultaDniRef} data-omitir-al-seleccionar="true" value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
+            <div className="empleado-consulta-dni"><Field label="Consultar DNI"><TextInput ref={consultaDniRef} value={consultaDni} inputMode="numeric" maxLength={8} onChange={(e) => setConsultaDni(e.currentTarget.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void buscarDni(); } }} /></Field><Button type="button" disabled={consultandoDni} onClick={() => void buscarDni()} aria-label="Consultar DNI"><Search size={16} /></Button></div>
             <Field label="Nombres"><TextInput name={nombreCampo(1)} value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="Apellidos"><TextInput name={nombreCampo(2)} value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="DNI"><TextInput name={nombreCampo(3)} value={dni} inputMode="numeric" pattern="[0-9]{8}" title="El DNI debe tener 8 dígitos" onChange={(e) => setDni(e.currentTarget.value.replace(/\D/g, ""))} required maxLength={8} /></Field>
@@ -192,6 +192,7 @@ export function EmpleadoForm({
             <Field label="Dirección"><TextInput name={nombreCampo(4)} defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
             <Field label="Correo"><TextInput name={nombreCampo(6)} type="email" pattern="\S+@\S+\.\S+" title="Ingrese un correo válido" defaultValue={empleado?.email ?? ""} maxLength={100} /></Field>
             <Field label={empleado ? "Fecha y hora de ingreso" : "Fecha de ingreso"}><TextInput value={ingreso} readOnly /></Field>
+            <Field label="Fecha y hora de actualización"><TextInput value={formatoFecha(empleado?.actualizacion ?? null)} readOnly /></Field>
             <CampoEstado estado={empleado?.estado} />
             <Field label="Turno sugerido para horario"><Select name="turnoId" defaultValue={empleado?.turnoId ?? ""}><option value="">Sin asignar</option>{turnos.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}</Select></Field>
           </div>

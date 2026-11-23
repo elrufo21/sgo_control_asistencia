@@ -21,6 +21,7 @@ export type DatosEmpleado = {
 };
 export type Empleado = DatosEmpleado & {
   id: number;
+  actualizacion?: string | null;
   area: string | null;
   tieneFoto: boolean;
   tieneHuella: boolean;

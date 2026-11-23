@@ -49,7 +49,7 @@ export function AccionesFormulario({
   eliminar?: () => void;
 }) {
   return (
-    <div className="dialog-actions">
+    <div className="dialog-actions acciones-dxn">
       {eliminar && (
         <Button
           type="button"
@@ -69,7 +69,7 @@ export function AccionesFormulario({
         Cancelar
       </Button>
       <Button type="submit" disabled={guardando}>
-        {guardando ? "Guardando..." : "Guardar registro"}
+        {guardando ? "Guardando..." : "Guardar"}
       </Button>
     </div>
   );
