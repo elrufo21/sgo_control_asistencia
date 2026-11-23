@@ -73,7 +73,7 @@ export function TurnosPage({ volver }: { volver: () => void }) {
           <Field label="Salida a refrigerio (turnos de 4 marcas)"><TextInput name="salidaRefrigerio" type="time" defaultValue={turno?.salidaRefrigerio ?? ""} /></Field>
           <Field label="Retorno de refrigerio (turnos de 4 marcas)"><TextInput name="retornoRefrigerio" type="time" defaultValue={turno?.retornoRefrigerio ?? ""} /></Field>
           <Field label="Separación mínima entre marcas (min)"><TextInput name="minutosEntre" type="number" min="1" max="1440" step="1" required defaultValue={turno?.minutosEntre ?? 60} /></Field>
-          <CampoEstado estado={turno?.estado} />
+          <CampoEstado estado={turno?.estado} editable={!!turno} />
         </>
       )}
     />

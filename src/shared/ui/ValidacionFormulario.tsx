@@ -49,8 +49,8 @@ export function ValidacionFormulario({ children }: { children: ReactNode }) {
       const enter = evento.key === "Enter";
       const flecha = evento.key === "ArrowDown" || evento.key === "ArrowUp";
       if (!enter && !flecha) return;
-      if (flecha && (campo instanceof HTMLSelectElement || ["number", "date", "time", "month", "week", "datetime-local", "range"].includes(campo.type))) return;
-      if (moverFoco(campo, evento.key === "ArrowUp" ? -1 : 1, campo instanceof HTMLSelectElement)) evento.preventDefault();
+      if (flecha && (campo instanceof HTMLSelectElement || ["date", "time", "month", "week", "datetime-local", "range"].includes(campo.type))) return;
+      if (moverFoco(campo, evento.key === "ArrowUp" ? -1 : 1, campo instanceof HTMLSelectElement) || (flecha && campo.type === "number")) evento.preventDefault();
     }
     document.addEventListener("keydown", navegar);
     return () => document.removeEventListener("keydown", navegar);

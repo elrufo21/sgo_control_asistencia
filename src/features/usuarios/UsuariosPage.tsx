@@ -88,7 +88,7 @@ export function UsuariosPage({ volver }: { volver: () => void }) {
             <Field label="Confirmar contraseña">
               <PasswordInput name={confirmarClaveId} evitarSugerencias required={!usuario} placeholder="Repita la contraseña" />
             </Field>
-            <CampoEstado estado={usuario?.estado} />
+            <CampoEstado estado={usuario?.estado} editable={!!usuario} />
           </div>
         )}
       />

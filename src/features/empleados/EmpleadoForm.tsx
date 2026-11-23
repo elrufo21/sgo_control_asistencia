@@ -54,6 +54,7 @@ export function EmpleadoForm({
   const campoId = useId().replace(/[^a-zA-Z0-9]/g, "");
   // El navegador usa name o id para buscar entradas anteriores.
   const consultaDniRef = useRef<HTMLInputElement>(null);
+  const telefonoRef = useRef<HTMLInputElement>(null);
   const nombreCampo = (indice: number) => `registro_${campoId}_${indice}`;
   const [consultaDni, setConsultaDni] = useState("");
   const [consultandoDni, setConsultandoDni] = useState(false);
@@ -130,6 +131,7 @@ export function EmpleadoForm({
       if (resultado.nombres) setNombres(resultado.nombres);
       if (resultado.apellidos) setApellidos(resultado.apellidos);
       setEditado(true);
+      telefonoRef.current?.focus({ preventScroll: true });
     } catch (error) { setError(mensajeError(error)); }
     finally { setConsultandoDni(false); }
   }
@@ -186,7 +188,7 @@ export function EmpleadoForm({
             <Field label="Nombres"><TextInput name={nombreCampo(1)} value={nombres} onChange={(e) => setNombres(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="Apellidos"><TextInput name={nombreCampo(2)} value={apellidos} onChange={(e) => setApellidos(e.currentTarget.value)} required maxLength={140} /></Field>
             <Field label="DNI"><TextInput name={nombreCampo(3)} value={dni} inputMode="numeric" pattern="[0-9]{8}" title="El DNI debe tener 8 dígitos" onChange={(e) => setDni(e.currentTarget.value.replace(/\D/g, ""))} required maxLength={8} /></Field>
-            <Field label="Teléfono"><TextInput name={nombreCampo(5)} defaultValue={empleado?.telefono ?? ""} maxLength={40} /></Field>
+            <Field label="Teléfono"><TextInput ref={telefonoRef} name={nombreCampo(5)} defaultValue={empleado?.telefono ?? ""} maxLength={40} /></Field>
             <Field label="Fecha de nacimiento"><TextInput name="nacimiento" type="date" value={nacimiento} onChange={(e) => setNacimiento(e.currentTarget.value)} /></Field>
             <Field label="Edad"><TextInput value={edad} readOnly disabled /></Field>
             <Field label="Dirección"><TextInput name={nombreCampo(4)} defaultValue={empleado?.direccion ?? ""} maxLength={140} /></Field>
