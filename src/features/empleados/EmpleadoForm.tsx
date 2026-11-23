@@ -114,7 +114,8 @@ export function EmpleadoForm({
         fotoBase64: foto ? await leerFoto(foto) : undefined,
       });
       alGuardar();
-      alCerrar();
+      if (empleado) alCerrar();
+      else alNuevo();
     } catch (error) {
       setError(mensajeError(error));
     } finally {
@@ -126,13 +127,15 @@ export function EmpleadoForm({
     if (!/^\d{8}$/.test(consultaDni)) { setError("Ingresa los 8 dígitos del DNI."); enfocarCampo(consultaDniRef.current); return; }
     setConsultandoDni(true); setError("");
     try {
-      const resultado = await consultar<{ dni: string; nombres: string; apellidos: string }>(`empleados/consulta-dni/${consultaDni}`);
+      const parametros = new URLSearchParams({ validarDuplicado: "true" });
+      if (empleado) parametros.set("personalId", String(empleado.id));
+      const resultado = await consultar<{ dni: string; nombres: string; apellidos: string }>(`empleados/consulta-dni/${consultaDni}?${parametros}`);
       setDni(resultado.dni);
       if (resultado.nombres) setNombres(resultado.nombres);
       if (resultado.apellidos) setApellidos(resultado.apellidos);
       setEditado(true);
       telefonoRef.current?.focus({ preventScroll: true });
-    } catch (error) { setError(mensajeError(error)); }
+    } catch (error) { setError(mensajeError(error)); enfocarCampo(consultaDniRef.current); }
     finally { setConsultandoDni(false); }
   }
 

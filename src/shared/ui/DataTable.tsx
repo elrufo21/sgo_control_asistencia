@@ -1,5 +1,5 @@
 // Adaptado de sgo_dnx_frontend/src/components/DataTable.tsx.
-import { useDeferredValue, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable, type ColumnDef, type PaginationState } from "@tanstack/react-table";
 import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
 import SearchInput from "./SearchInput";
@@ -33,6 +33,7 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   initialPageSize?: number;
   mantenimiento?: boolean;
 }) {
+  const tablaRef = useRef<HTMLElement>(null);
   const searchKey = `asistencia:datatable:search:${storageKey}`;
   const sizeKey = `asistencia:datatable:pageSize:${storageKey}`;
   const [search, setSearch] = useState(() => showSearch && persistSearch ? storedValue(sessionStorage, searchKey, "") : "");
@@ -48,11 +49,18 @@ export default function DataTable<T extends object>({ columns, data, filterKeys,
   useEffect(() => { setPagination((p) => p.pageIndex >= totalPages ? { ...p, pageIndex: totalPages - 1 } : p); }, [totalPages]);
   useEffect(() => { if (showSearch && persistSearch) saveValue(sessionStorage, searchKey, search); }, [search, searchKey, showSearch, persistSearch]);
   useEffect(() => { if (showPagination) saveValue(localStorage, sizeKey, String(pagination.pageSize)); }, [pagination.pageSize, sizeKey, showPagination]);
+  useEffect(() => {
+    const buscador = tablaRef.current?.querySelector<HTMLInputElement>('.data-table-search input');
+    if (!buscador?.getClientRects().length) return;
+    const activo = document.activeElement;
+    if (activo instanceof HTMLInputElement && activo.closest('.data-table-search')) return;
+    buscador.focus({ preventScroll: true });
+  }, [showSearch]);
   const visibleRows = showPagination ? table.getRowModel().rows : table.getCoreRowModel().rows;
   const start = filtered.length ? pagination.pageIndex * pagination.pageSize + 1 : 0;
   const end = Math.min(start + visibleRows.length - (start ? 1 : 0), filtered.length);
 
-  return <section className={`panel data-table${mantenimiento ? " data-table-mantenimiento" : ""}`}>
+  return <section ref={tablaRef} className={`panel data-table${mantenimiento ? " data-table-mantenimiento" : ""}`}>
     {(title || showSearch || action || searchAction || filters) && <div className="data-table-toolbar">
       <div className="data-table-toolbar-row">
         <div className="data-table-primary">

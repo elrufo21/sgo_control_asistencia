@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FileText, Search } from "lucide-react";
+import { FileText, Search, TriangleAlert } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { listarPersonalParaReporte } from "../empleados/api";
 import { useConsulta } from "../../shared/hooks/useConsulta";
@@ -12,16 +12,22 @@ import { consultarReporte, type FilaReporte } from "./api";
 import "./reporte.css";
 
 const dia = (fecha: string) => new Date(`${fecha}T12:00:00`).toLocaleDateString("es-PE", { weekday: "long" }).toLocaleUpperCase("es-PE");
+function marcacion(valor: string | null, fila: FilaReporte, nombre: string, requerida = true) {
+  if (valor) return valor;
+  if (fila.estadoMarcacion !== "INCOMPLETA" || !requerida) return "—";
+  return <span className="reporte-marca-faltante" role="img" aria-label={`Falta ${nombre}`} title={`Falta ${nombre}`}><TriangleAlert size={16} aria-hidden="true" /></span>;
+}
 const columnas: ColumnDef<FilaReporte, unknown>[] = [
   { accessorKey: "fecha", header: "Fecha", cell: ({ row }) => formatoFecha(row.original.fecha) },
   { id: "dia", header: "Día", cell: ({ row }) => dia(row.original.fecha) },
   { accessorKey: "empleado", header: "Nombres" },
-  { accessorKey: "entrada", header: "Ingreso" },
-  { accessorKey: "salidaRefrigerio", header: "Salida refrigerio", cell: ({ getValue }) => String(getValue() || "—") },
-  { accessorKey: "retornoRefrigerio", header: "Retorno refrigerio", cell: ({ getValue }) => String(getValue() || "—") },
-  { accessorKey: "salida", header: "Salida", cell: ({ getValue }) => String(getValue() || "—") },
+  { accessorKey: "entrada", header: "Ingreso", cell: ({ row }) => marcacion(row.original.entrada, row.original, "ingreso") },
+  { accessorKey: "salidaRefrigerio", header: "Salida refrigerio", cell: ({ row }) => marcacion(row.original.salidaRefrigerio, row.original, "salida a refrigerio", row.original.marcacionesProgramadas === 4) },
+  { accessorKey: "retornoRefrigerio", header: "Retorno refrigerio", cell: ({ row }) => marcacion(row.original.retornoRefrigerio, row.original, "retorno de refrigerio", row.original.marcacionesProgramadas === 4) },
+  { accessorKey: "salida", header: "Salida", cell: ({ row }) => marcacion(row.original.salida, row.original, "salida") },
   { accessorKey: "tardanzas", header: "N.º tardanzas" },
   { accessorKey: "estado", header: "Asistencia", cell: ({ row }) => <strong className={row.original.estado === "TARDANZA" ? "reporte-tardanza" : "reporte-asistencia"}>{row.original.estado}</strong> },
+  { accessorKey: "estadoMarcacion", header: "Marcaciones", cell: ({ row }) => row.original.estadoMarcacion === "INCOMPLETA" ? <span className="reporte-incompleta"><TriangleAlert size={16} aria-hidden="true" /> Incompleta</span> : row.original.estadoMarcacion === "EN CURSO" ? "En curso" : row.original.estadoMarcacion === "SIN HORARIO" ? "Sin horario registrado" : row.original.estadoMarcacion === "COMPLETA" ? "Completa" : "—" },
 ];
 const hoy = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
@@ -37,7 +43,7 @@ export function ReportePage() {
   const empleados = useConsulta(listarPersonalParaReporte);
   const consultar = useCallback((signal: AbortSignal) => consultarReporte(rango.desde, rango.hasta, signal), [rango]);
   const reporte = useConsulta(consultar);
-  const filas = (general || personal ? reporte.datos ?? [] : []).filter((fila) => general || String(fila.personalId) === personal).sort((a, b) => a.fecha.localeCompare(b.fecha) || b.entrada.localeCompare(a.entrada));
+  const filas = (general || personal ? reporte.datos ?? [] : []).filter((fila) => general || String(fila.personalId) === personal).sort((a, b) => a.fecha.localeCompare(b.fecha) || (b.entrada ?? "").localeCompare(a.entrada ?? ""));
   function buscar(fechaFin = hasta) {
     const valido = !!desde && !!fechaFin && desde <= fechaFin && (Date.parse(`${fechaFin}T00:00:00Z`) - Date.parse(`${desde}T00:00:00Z`)) / 86400000 <= 366;
     if (!valido) { setErrorRango("Seleccione un rango válido de hasta 367 días."); return; }

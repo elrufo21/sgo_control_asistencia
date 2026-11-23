@@ -38,6 +38,7 @@ export function AppLayout({
   const [menuUsuario, setMenuUsuario] = useState(false);
   const usuarioRef = useRef<HTMLDivElement>(null);
   const botonUsuarioRef = useRef<HTMLButtonElement>(null);
+  const nombreUsuario = [sesion.nombres, sesion.apellidos].map((valor) => valor?.trim().split(/\s+/)[0]).filter(Boolean).join(" ") || sesion.usuario;
   const titulo = pagina === "mantenimiento" ? "Mantenimiento" : navegacion.find(({ id }) => id === pagina)?.titulo;
   const paginas = paginasDe(sesion);
   const textoBusqueda = normalizeSearchText(busqueda);
@@ -168,7 +169,7 @@ export function AppLayout({
               ref={botonUsuarioRef}
               type="button"
               className="top-user-trigger"
-              aria-label={`Menú de ${sesion.usuario}`}
+              aria-label={`Menú de ${nombreUsuario}`}
               aria-expanded={menuUsuario}
               aria-controls="menu-usuario"
               onClick={() => setMenuUsuario((abierto) => !abierto)}
@@ -177,10 +178,8 @@ export function AppLayout({
                 <UserRound size={19} />
               </span>
               <span className="top-user-info">
-                <strong>{sesion.usuario}</strong>
-                <small>
-                  {sesion.rol === "ADMIN" ? "Administrador" : "Empleado"}
-                </small>
+                <strong>{nombreUsuario}</strong>
+                <small>Sesión activa</small>
               </span>
               <ChevronDown size={16} aria-hidden="true" />
             </button>

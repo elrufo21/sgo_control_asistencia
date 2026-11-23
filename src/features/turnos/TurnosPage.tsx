@@ -46,7 +46,7 @@ export function TurnosPage({ volver }: { volver: () => void }) {
           <TextInput type="hidden" name="toleranciaAntes" defaultValue={turno?.toleranciaAntes ?? 60} />
           <TextInput type="hidden" name="toleranciaDespues" defaultValue={turno?.toleranciaDespues ?? 60} />
           <Field label="Nombre del turno">
-            <TextInput name="nombre" defaultValue={turno?.nombre} required />
+            <TextInput name="nombre" defaultValue={turno?.nombre} autoFocus={!turno} required />
           </Field>
           <Field label="Hora de entrada">
             <TextInput

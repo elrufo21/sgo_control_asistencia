@@ -8,3 +8,5 @@
 .reporte-filtros .button { min-height: 40px; }
 .reporte-tardanza { color: #b45309; }
 .reporte-asistencia { color: #047857; }
+.reporte-marca-faltante, .reporte-incompleta { display: inline-flex; align-items: center; gap: 5px; color: #dc2626; }
+.reporte-incompleta { font-weight: 600; }

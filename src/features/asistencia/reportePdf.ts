@@ -18,8 +18,8 @@ export function generarReportePdf(filas: FilaReporte[], desde: string, hasta: st
   pdf.text(subtitulo, 14, 22);
   autoTable(pdf, {
     startY: 25 + subtitulo.length * 4,
-    head: [["Fecha", "Día", "Nombres", "Ingreso", "Salida refrigerio", "Retorno refrigerio", "Salida", "N.º tardanzas", "Asistencia"]],
-    body: filas.map((fila) => [formatoFecha(fila.fecha), diaReporte(fila.fecha), fila.empleado, fila.entrada || "-", fila.salidaRefrigerio || "-", fila.retornoRefrigerio || "-", fila.salida || "-", String(fila.tardanzas ?? "-"), fila.estado || "-"]),
+    head: [["Fecha", "Día", "Nombres", "Ingreso", "Salida refrigerio", "Retorno refrigerio", "Salida", "N.º tardanzas", "Asistencia", "Marcaciones"]],
+    body: filas.map((fila) => [formatoFecha(fila.fecha), diaReporte(fila.fecha), fila.empleado, fila.entrada || "-", fila.salidaRefrigerio || "-", fila.retornoRefrigerio || "-", fila.salida || "-", String(fila.tardanzas ?? "-"), fila.estado || "-", fila.estadoMarcacion || "-"]),
     styles: { font: "helvetica", fontSize: 8, cellPadding: 2.5, overflow: "linebreak" },
     headStyles: { fillColor: [178, 54, 54] },
     margin: { left: 14, right: 14, bottom: 15 },

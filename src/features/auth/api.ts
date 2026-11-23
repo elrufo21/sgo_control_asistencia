@@ -5,6 +5,8 @@ export type Sesion = {
   usuario: string;
   rol: Rol;
   personalId?: number | string | null;
+  nombres?: string | null;
+  apellidos?: string | null;
   areaId?: number | string | null;
   permisos: string[];
 };

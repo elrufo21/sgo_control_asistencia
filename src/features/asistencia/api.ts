@@ -8,11 +8,13 @@ export type FilaReporte = {
   turno: string | null;
   entradaProgramada: string | null;
   salidaProgramada: string | null;
-  entrada: string;
+  entrada: string | null;
   salidaRefrigerio: string | null;
   retornoRefrigerio: string | null;
   salida: string | null;
   estado: string;
+  estadoMarcacion?: "COMPLETA" | "EN CURSO" | "INCOMPLETA" | "SIN HORARIO";
+  marcacionesProgramadas?: number;
   tardanzas: number;
 };
 export function consultarReporte(
